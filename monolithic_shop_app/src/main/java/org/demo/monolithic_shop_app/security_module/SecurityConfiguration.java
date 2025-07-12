@@ -2,6 +2,7 @@ package org.demo.monolithic_shop_app.security_module;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
@@ -21,9 +22,10 @@ public class SecurityConfiguration {
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
             // Permit all requests to H2 console path
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(antMatcher("/h2-console/**")).permitAll()
+                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**")).permitAll()
                 .anyRequest().authenticated() // Protect other endpoints
-            );
+            )
+            .formLogin(Customizer.withDefaults());
         return http.build();
     }
 
