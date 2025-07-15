@@ -10,8 +10,6 @@ public class BusinessService {
 	public BusinessService() {
 		setProducts(new ProductList());
 	}
-	
-	public void queryProducts() {}
 
 	public ProductList getProducts() {
 		return products;
@@ -19,5 +17,14 @@ public class BusinessService {
 
 	public void setProducts(ProductList products) {
 		this.products = products;
+	}
+	
+	public void queryProducts() {
+		
+	}
+	
+	public void updateProductByName(String name, String property, String value) {
+		//default value for testing
+		name = "product 5";
 	}
 }

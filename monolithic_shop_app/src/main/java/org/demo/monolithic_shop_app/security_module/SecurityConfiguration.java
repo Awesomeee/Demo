@@ -17,12 +17,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
         http
             // Disable CSRF for H2 console
-            .csrf(csrf -> csrf.ignoringRequestMatchers(antMatcher("/h2-console/**")))
+            .csrf(csrf -> csrf.ignoringRequestMatchers(antMatcher("/h2-console/**"), antMatcher("/test/**")))
             // Allow frames from the same origin (essential for H2 console)
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
             // Permit all requests to H2 console path
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**")).permitAll()
+                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/test/**")).permitAll()
                 .anyRequest().authenticated() // Protect other endpoints
             )
             .formLogin(Customizer.withDefaults());
