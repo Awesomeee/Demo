@@ -1,7 +1,27 @@
 <!DOCTYPE HTML>
 <html xmlns:th="https://www.thymeleaf.org">
+	<head>
+		<script>
+			function testSendRequest() {
+				fetch('http://localhost:8080/api/products/123', {
+				      method: 'PUT',
+				      headers: {
+				        'Content-Type': 'text/plain', // 'application/json',
+				      },
+				      body: JSON.stringify({ title: 'New Post', content: 'Some content' }),
+				    })
+				      .then(response => response.text())
+				      .then(data => {
+				    	  				console.log(data);
+				    	  				document.getElementById("result").innerHTML = data;
+				    	  			});
+			}
+		</script>
+	</head>
 	<body>
 		<h1>Workshop</h1>
 		<p th:text="'Hello, ' + ${username}" />
+		<button onclick="testSendRequest()">Send a request</button>
+		<p id="result"></p>
 	</body>
 </html>
