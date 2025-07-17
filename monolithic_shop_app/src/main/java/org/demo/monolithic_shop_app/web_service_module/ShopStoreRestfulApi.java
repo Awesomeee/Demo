@@ -40,8 +40,19 @@ public class ShopStoreRestfulApi {
 	@GetMapping(path = "/api/products")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.OK)
-	public ProductList queryProductList(@RequestParam(name = "page", required = false) String page,@RequestParam(name = "size", required = false) String size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
-		return businessService.getProducts();
+	public ProductList queryProductList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
+		return businessService.queryAllProducts(page, size, sort, direction);
+	}
+	
+	@PostMapping(path = "/api/products")
+	public String submitProducts() {
+		return "result";
+	}
+	
+	@GetMapping(path = "/api/products/{product-category}")
+	@ResponseStatus(code = HttpStatus.OK)
+	public String queryProductListByCategory() {
+		return "result";
 	}
 	
 	@GetMapping(path = "/api/products/{product-id}")

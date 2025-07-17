@@ -26,7 +26,7 @@ public class SecurityConfiguration {
 	 */
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-		String mode = "SIMPLE";		//SIMPLE: turn off csrf in formLogin mode, COMPLEX: turn on csrf in httpBasic mode, COMPLEX_2: turn on csrf in formLogin mode
+		String mode = "COMPLEX_2";		//SIMPLE: turn off csrf in formLogin mode, COMPLEX: turn on csrf in httpBasic mode, COMPLEX_2: turn on csrf in formLogin mode
 		if(mode == "SIMPLE") {
 	        http
 	            // Disable CSRF for H2 console
@@ -66,7 +66,7 @@ public class SecurityConfiguration {
                 .anyRequest().authenticated() // Protect other endpoints
             )
             .formLogin(Customizer.withDefaults());
-	}
+		}
         return http.build();
     }
 
