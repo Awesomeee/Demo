@@ -1,7 +1,10 @@
 package org.demo.monolithic_shop_app.business_module;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.demo.monolithic_shop_app.data_module.ProductTable;
 import org.demo.monolithic_shop_app.data_module.ProductTableRepository;
@@ -55,12 +58,73 @@ public class BusinessService {
 		return result;
 	}
 	
-	public int deleteProductById(String id) {
-		return 1;
+	public int createNewProductResource(Product product) {
+		int result = 1;
+		try {
+			ProductTable row = new ProductTable(product.getId(), product.getName(), product.getDescription(), product.getPrice(), product.getCurrency(), product.getProvider());
+			productTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
 	}
 	
-	public void updateProductByName(String name, String property, String value) {
-		//default value for testing
-		name = "product 5";
+	public int updateProduct(String id, Product product) {
+		int result = 1;
+		try {
+			Optional<ProductTable> updateRow = productTableRepository.findById(id);
+			updateRow.get().setName(product.getName());
+			updateRow.get().setDescription(product.getDescription());
+			updateRow.get().setPrice(product.getPrice());
+			updateRow.get().setCurrency(product.getCurrency());
+			updateRow.get().setProvider(product.getProvider());
+			productTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
 	}
+	
+	public int updatePartialProduct(String id, HashMap<String, String> updateDatas) {
+		int result = 1;
+		try {
+			Optional<ProductTable> updateRow = productTableRepository.findById(id);
+			Field[] fields = updateRow.get().getClass().getDeclaredFields();
+			
+			boolean isUpdate = false;
+			for(String data: updateDatas.keySet()) {
+				for(int i=0;i<fields.length;i++) {
+					if(fields[i].getName().equals(data)) {
+						//update object data
+						updateRow.get().getClass().getMethod("set" + data.substring(0, 1).toUpperCase() + data.substring(1), String.class).invoke(updateRow.get(), updateDatas.get(data));
+						isUpdate = true;
+						break;
+					}
+				}
+				
+			}
+			
+			if(isUpdate)
+				productTableRepository.save(updateRow.get());
+		
+		} catch(Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteProductById(String id) {
+		int result = 1;
+		try {
+			productTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+
 }

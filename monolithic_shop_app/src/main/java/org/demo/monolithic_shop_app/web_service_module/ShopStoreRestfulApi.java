@@ -3,12 +3,14 @@ package org.demo.monolithic_shop_app.web_service_module;
 import java.util.HashMap;
 
 import org.demo.monolithic_shop_app.business_module.BusinessService;
+import org.demo.monolithic_shop_app.business_module.Product;
 import org.demo.monolithic_shop_app.business_module.ProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,8 +47,9 @@ public class ShopStoreRestfulApi {
 	}
 	
 	@PostMapping(path = "/api/products")
-	public String submitProducts() {
-		return "result";
+	public String submitProducts(@RequestBody(required = true) Product submitData) {
+		int result = businessService.createNewProductResource(submitData);
+		return result + "";
 	}
 	
 	@GetMapping(path = "/api/products/{product-category}")
@@ -63,20 +66,23 @@ public class ShopStoreRestfulApi {
 	
 	@PatchMapping(path = "/api/products/{product-id}")
 	@ResponseStatus(code = HttpStatus.OK)
-	public String updatePartiallyProductResource(@RequestParam(name = "productName", required = false) String page) {
-		return "result";
+	public String updatePartiallyProductResource(@PathVariable(name = "product-id", required = true) String productId, @RequestBody(required = true) HashMap<String, String> updateData) {
+		int result = businessService.updatePartialProduct(productId, updateData);
+		return result + "";
 	}
 	
 	@PutMapping(path = "/api/products/{product-id}")
 	@ResponseStatus(code = HttpStatus.OK)
-	public String updateProductResource(@RequestParam(name = "productName", required = false) String page) {
-		return "result";
+	public String updateProductResource(@PathVariable(name = "product-id", required = true) String productId, @RequestBody(required = true) Product updateData) {
+		int result = businessService.updateProduct(productId, updateData);
+		return result + "";
 	}
 	
 	@DeleteMapping(path = "/api/products/{product-id}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public String deleteProductResource() {
-		return "result";
+	public String deleteProductResource(@PathVariable(name = "product-id", required = true) String productId) {
+		int result = businessService.deleteProductById(productId);
+		return result + "";
 	}
 	
 	@PostMapping(path = "/test")
