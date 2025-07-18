@@ -43,6 +43,12 @@ public class ShopStoreRestfulApi {
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.OK)
 	public ProductList queryProductList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
+		/*try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		return businessService.queryAllProducts(page, size, sort, direction);
 	}
 	

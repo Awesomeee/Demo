@@ -12,13 +12,15 @@ public class ShopStoreView {
 	
 	@GetMapping(path = "/guest/shop")
 	public String ShopView() {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String mode = "SIMPLE";
+		if(mode == "SIMPLE")
+			return "shop_simple_gui";
+		else if(mode == "EXQUISITE")
+			return "shop_exquisite_gui";
+		else {
+			//default
+			return "shop_simple_gui";
 		}
-		return "shop";
 	}
 	
 	@GetMapping(path = "/employee/workshop")
