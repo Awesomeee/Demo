@@ -27,7 +27,7 @@
 		
 		<div id="main_content">
 			<h1>Welcome to the shop</h1>
-			<table class="table table-hover">
+			<table id="productTable" class="table table-hover">
 				<thead>
 					<tr>
 						<th scope="col">ID</th>
@@ -39,37 +39,81 @@
 				<tbody>
 					<tr>
 						<th scope="row">1</th>
-						<td>table</td>
-						<td>Good for education</td>
-						<td>10000 VND</td>
-					</tr>
-					<tr>
-						<th scope="row">2</th>
-						<td>wood table</td>
-						<td>friendly and beautiful</td>
-						<td>50000 VND</td>
+						<td>table- sample data</td>
+						<td>Good for education- sample data</td>
+						<td>10000 VND- sample data</td>
 					</tr>
 				</tbody>
 			</table>
+			<div style="display:flex">
+				<button onclick="slidePrevPage()" id="table_prev_btn" style="flex:1;margin-right:5px">Prev</button>
+				<button onclick="turnNextPage()" id="table_next_btn" style="flex:1">Next</button>
+				<div style="flex:7"></div>
+			</div>
 		</div>
 		
 		<script>
-			document.getElementById("main_content").style.display = "none";
+			let currentPage = 0;
+		
 			
-			fetch('http://localhost:8080/api/products?page=0&size=5&sort=id&direction=asc', {
-			      method: 'GET',
-			      headers: {
-			        'Content-Type': 'text/plain', // 'application/json',
-			      },
-			      //body: JSON.stringify({ title: 'New Post', content: 'Some content' }),
-			    })
-			      .then(response => response.text())
-			      .then(data => {
-			    	  				console.log("result");
-			    	  				console.log(data);
-			    	  				document.getElementById("loading").style.display = "none";
-			    	  				document.getElementById("main_content").style.display = "initial";
-			    	  			});
+			
+			function loadProductData() {
+				
+				document.getElementById("main_content").style.display = "none";
+				let loadUri = 'http://localhost:8080/api/products?page='+currentPage+'&size=2&sort=id&direction=asc';
+			
+				fetch(loadUri, {
+				      method: 'GET',
+				      headers: {
+				        'Content-Type': 'text/plain', // 'application/json',
+				      },
+				      //body: JSON.stringify({ title: 'New Post', content: 'Some content' }),
+				    })
+				      .then(response => response.text())
+				      .then(outputData => {
+				    	  				let products = JSON.parse(outputData);
+				    	  				let dataList = products.products;
+				    	  				let table = document.getElementById("productTable");
+				    	  				table.getElementsByTagName("tbody")[0].remove();
+				    	  				let tbody = document.createElement("tbody"); 	  				
+				    	  				for(let i=0;i<dataList.length;i++) {
+				    	  					let tr = document.createElement("tr");
+				    	  					let th = document.createElement("th");
+				    	  					th.setAttribute("scope","row");
+				    	  					th.innerHTML = i + 1 + currentPage*2;
+				    	  					let td_1 = document.createElement("td");
+				    	  					td_1.innerHTML = dataList[i].name;
+				    	  					let td_2 = document.createElement("td");
+				    	  					td_2.innerHTML = dataList[i].description;
+				    	  					let td_3 = document.createElement("td");
+				    	  					td_3.innerHTML = dataList[i].price + " " + dataList[i].currency;
+				    	  					tr.append(th);
+				    	  					tr.append(td_1);
+				    	  					tr.append(td_2);
+				    	  					tr.append(td_3);
+				    	  					tbody.append(tr);
+				    	  				}
+				    	  				table.append(tbody);
+				    	  				document.getElementById("loading").style.display = "none";
+				    	  				document.getElementById("main_content").style.display = "initial";
+				    	  			});
+			
+			}
+			
+			
+			function slidePrevPage() {
+				currentPage--;
+				document.getElementById("loading").style.display = "flex";
+				loadProductData();
+			}
+			
+			function turnNextPage() {
+				currentPage++;
+				document.getElementById("loading").style.display = "flex";
+				loadProductData();
+			}
+			
+			loadProductData();
 		</script>
 	</body>
 </html>
