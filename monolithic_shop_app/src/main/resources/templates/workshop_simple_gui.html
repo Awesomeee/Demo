@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+	<head>
+		<link href="/css/bootstrap.min.css" rel="stylesheet" />
+		<script src="/js/bootstrap.bundle.min.js" ></script> 
+		<style>
+			.loader {
+			  border: 16px solid #f3f3f3; /* Light grey */
+			  border-top: 16px solid #3498db; /* Blue */
+			  border-radius: 50%;
+			  width: 120px;
+			  height: 120px;
+			  animation: spin 2s infinite;
+			}
+			
+			@keyframes spin {
+			  0% { transform: rotate(0deg); }
+			  100% { transform: rotate(360deg); }
+			}
+		</style>
+	</head>
+	<body>
+		<div id="loading" style="display:flex;justify-content:center;margin-top:300px">
+			<div class="loader"></div>
+		</div>
+		
+		<div id="main_content">
+			<h1>Workshop</h1>
+			<p th:text="'Hello, ' + ${username}" />
+			<table id="productTable" class="table table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Action</th>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">
+							<div style="display:flex">
+								<button>edit</button>
+								<button>del</button>
+							</div>
+						</th>
+						<td>1</td>
+						<td>table- sample data</td>
+						<td>Good for education- sample data</td>
+						<td>10000 VND- sample data</td>
+					</tr>
+				</tbody>
+			</table>
+			<button style="margin-bottom:10px">+</button>
+			<div style="display:flex">
+				<button onclick="slidePrevPage()" id="table_prev_btn" style="flex:1;margin-right:5px">Prev</button>
+				<button onclick="turnNextPage()" id="table_next_btn" style="flex:1">Next</button>
+				<div style="flex:7"></div>
+			</div>
+		</div>
+		
+		<script>
+			let currentPage = 0;
+			let currentCellSelection = -1;
+			
+			function resetCellSelection() {
+				if(currentCellSelection != -1) {
+					let tr = document.getElementById("tr"+currentCellSelection);
+					let tdChilds = tr.getElementsByTagName("td");
+					for(let i=0;i<tdChilds.length;i++) {
+						tdChilds[i].setAttribute("style", null);
+						tdChilds[i].setAttribute("contenteditable","false");
+					}
+					let editBtn = document.getElementById("editBtn" + currentCellSelection);
+					editBtn.style.display = "initial";
+					let deleteBtn = document.getElementById("deleteBtn" + currentCellSelection);
+					deleteBtn.style.display = "initial";
+					let confirmBtn = document.getElementById("confirmBtn" + currentCellSelection);
+					confirmBtn.style.display = "none";
+					let cancelBtn = document.getElementById("cancelBtn" + currentCellSelection);
+					cancelBtn.style.display = "none";
+					currentCellSelection = -1;
+				}
+			}
+		
+			function startEditMode(clickedBtn) {
+				resetCellSelection();
+				let id = clickedBtn.id.substring(7);
+				currentCellSelection = id;
+				let tr = document.getElementById("tr" + id);
+				let tdChilds = tr.getElementsByTagName("td");
+				for(let i=0;i<tdChilds.length;i++) {
+					let style = "border: 1px solid;";
+					tdChilds[i].setAttribute("style",style);
+					tdChilds[i].setAttribute("contenteditable","true");
+				}
+				let editBtn = document.getElementById("editBtn" + id);
+				editBtn.style.display = "none";
+				let deleteBtn = document.getElementById("deleteBtn" + id);
+				deleteBtn.style.display = "none";
+				let confirmBtn = document.getElementById("confirmBtn" + id);
+				confirmBtn.style.display = "initial";
+				let cancelBtn = document.getElementById("cancelBtn" + id);
+				cancelBtn.style.display = "initial";
+			}
+			
+			function confirmEdit() {
+				let id = currentCellSelection*1+1;
+				let loadUri = 'http://localhost:8080/api/products/' + id;
+				let tr = document.getElementById("tr"+currentCellSelection);
+				let trChilds = tr.getElementsByTagName("td");
+				let updateObject = {
+						name: trChilds[1].innerHTML,
+						description: trChilds[2].innerHTML,
+						price: -1,
+						currency: "VND",
+						provider: "sample hard data",
+				};
+				
+				fetch(loadUri, {
+				      method: 'PUT',
+				      headers: {
+				        'Content-Type': 'application/json',
+				      },
+				      body: JSON.stringify(updateObject),
+				    })
+				      .then(response => response.text())
+				      .then(outputData => {
+				    	  console.log(outputData);
+				      });
+				
+				resetCellSelection();
+			}
+			
+			function cancelEdit() {
+				resetCellSelection();
+			}
+			
+			function loadProductData() {
+				
+				document.getElementById("main_content").style.display = "none";
+				let loadUri = 'http://localhost:8080/api/products?page='+currentPage+'&size=2&sort=id&direction=asc';
+			
+				fetch(loadUri, {
+				      method: 'GET',
+				      headers: {
+				        'Content-Type': 'text/plain', // 'application/json',
+				      },
+				      //body: JSON.stringify({ title: 'New Post', content: 'Some content' }),
+				    })
+				      .then(response => response.text())
+				      .then(outputData => {
+				    	  				let products = JSON.parse(outputData);
+				    	  				let dataList = products.products;
+				    	  				let table = document.getElementById("productTable");
+				    	  				table.getElementsByTagName("tbody")[0].remove();
+				    	  				let tbody = document.createElement("tbody"); 	  				
+				    	  				for(let i=0;i<dataList.length;i++) {
+				    	  					let tr = document.createElement("tr");
+				    	  					tr.setAttribute("id", "tr" + (i + currentPage*2));
+				    	  					let th = document.createElement("th");
+				    	  					th.setAttribute("scope","row");
+				    	  					let div = document.createElement("div");
+				    	  					div.setAttribute("style","display:flex;");
+				    	  					let editBtn = document.createElement("button");
+				    	  					editBtn.innerHTML = "edit";
+				    	  					editBtn.setAttribute("id", "editBtn" + (i + currentPage*2));
+				    	  					editBtn.setAttribute("onclick","startEditMode(this)");
+				    	  					editBtn.setAttribute("style","margin-right:10px;");
+				    	  					let deleteBtn = document.createElement("button");
+				    	  					deleteBtn.innerHTML = "del";
+				    	  					deleteBtn.setAttribute("id", "deleteBtn" + (i + currentPage*2));
+				    	  					let confirmBtn = document.createElement("button");
+				    	  					confirmBtn.innerHTML = "confirm";
+				    	  					confirmBtn.setAttribute("id", "confirmBtn" + (i + currentPage*2));
+				    	  					confirmBtn.setAttribute("onclick","confirmEdit()");
+				    	  					confirmBtn.setAttribute("style","margin-right:10px;");
+				    	  					let cancelBtn = document.createElement("button");
+				    	  					cancelBtn.innerHTML = "cancel";
+				    	  					cancelBtn.setAttribute("id", "cancelBtn" + (i + currentPage*2));
+				    	  					cancelBtn.setAttribute("onclick","cancelEdit()");
+				    	  					cancelBtn.setAttribute("style","margin-right:10px;");
+				    	  					div.append(editBtn);
+				    	  					div.append(deleteBtn);
+				    	  					div.append(confirmBtn);
+				    	  					div.append(cancelBtn);
+				    	  					th.append(div);
+				    	  					confirmBtn.style.display = "none";
+				    	  					cancelBtn.style.display = "none";
+				    	  					let td_1 = document.createElement("td");
+				    	  					td_1.innerHTML = i + 1 + currentPage*2;
+				    	  					let td_2 = document.createElement("td");
+				    	  					td_2.innerHTML = dataList[i].name;
+				    	  					let td_3 = document.createElement("td");
+				    	  					td_3.innerHTML = dataList[i].description;
+				    	  					let td_4 = document.createElement("td");
+				    	  					td_4.innerHTML = dataList[i].price + " " + dataList[i].currency;
+				    	  					tr.append(th);
+				    	  					tr.append(td_1);
+				    	  					tr.append(td_2);
+				    	  					tr.append(td_3);
+				    	  					tr.append(td_4);
+				    	  					tbody.append(tr);
+				    	  				}
+				    	  				table.append(tbody);
+				    	  				document.getElementById("loading").style.display = "none";
+				    	  				document.getElementById("main_content").style.display = "initial";
+				    	  			});
+			
+			}
+			
+			
+			function slidePrevPage() {
+				currentPage--;
+				document.getElementById("loading").style.display = "flex";
+				loadProductData();
+			}
+			
+			function turnNextPage() {
+				currentPage++;
+				document.getElementById("loading").style.display = "flex";
+				loadProductData();
+			}
+			
+			loadProductData();
+		</script>
+	</body>
+</html>

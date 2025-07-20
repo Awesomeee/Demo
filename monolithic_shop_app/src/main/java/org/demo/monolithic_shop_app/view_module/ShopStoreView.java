@@ -30,7 +30,7 @@ public class ShopStoreView {
 		String username = authentication.getName();
 		
 		model.addAttribute("username", username);
-		return "workshop";
+		return "workshop_simple_gui";
 	}
 
 }
