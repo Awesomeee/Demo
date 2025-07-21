@@ -35,6 +35,8 @@
 						<th>Name</th>
 						<th>Description</th>
 						<th>Price</th>
+						<th>Currency</th>
+						<th>Provider</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -52,7 +54,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<button style="margin-bottom:10px">+</button>
+			<button onclick="startAddMode()" style="margin-bottom:10px">+</button>
 			<div style="display:flex">
 				<button onclick="slidePrevPage()" id="table_prev_btn" style="flex:1;margin-right:5px">Prev</button>
 				<button onclick="turnNextPage()" id="table_next_btn" style="flex:1">Next</button>
@@ -63,6 +65,7 @@
 		<script>
 			let currentPage = 0;
 			let currentCellSelection = -1;
+			let tableChangeMode = "VIEW";	// VIEW, EDIT, DELETE, ADD
 			
 			function resetCellSelection() {
 				if(currentCellSelection != -1) {
@@ -81,7 +84,55 @@
 					let cancelBtn = document.getElementById("cancelBtn" + currentCellSelection);
 					cancelBtn.style.display = "none";
 					currentCellSelection = -1;
+					tableChangeMode = "VIEW";
 				}
+			}
+			
+			function startAddMode() {
+				resetCellSelection();
+				let tbody = document.getElementById("productTable").getElementsByTagName("tbody")[0];
+				let tbodyTrChilds = tbody.getElementsByTagName("tr");
+				let tr = document.createElement("tr");
+				tr.setAttribute("id", "tr" + (tbodyTrChilds.length + currentPage*2));
+				let th = document.createElement("th");
+				th.setAttribute("scope","row");
+				let div = document.createElement("div");
+				div.setAttribute("style","display:flex;");
+				let confirmBtn = document.createElement("button");
+				confirmBtn.innerHTML = "confirm";
+				confirmBtn.setAttribute("id", "confirmBtn" + (tbodyTrChilds.length + currentPage*2));
+				confirmBtn.setAttribute("onclick","onConfirm()");
+				confirmBtn.setAttribute("style","margin-right:10px;");
+				let cancelBtn = document.createElement("button");
+				cancelBtn.innerHTML = "cancel";
+				cancelBtn.setAttribute("id", "cancelBtn" + (tbodyTrChilds.length + currentPage*2));
+				cancelBtn.setAttribute("onclick","onCancel()");
+				cancelBtn.setAttribute("style","margin-right:10px;");
+				div.append(confirmBtn);
+				div.append(cancelBtn);
+				th.append(div);
+				let td_1 = document.createElement("td");
+				let td_2 = document.createElement("td");
+				let td_3 = document.createElement("td");
+				let td_4 = document.createElement("td");
+				let td_5 = document.createElement("td");
+				let td_6 = document.createElement("td");
+				tr.append(th);
+				tr.append(td_1);
+				tr.append(td_2);
+				tr.append(td_3);
+				tr.append(td_4);
+				tr.append(td_5);
+				tr.append(td_6);
+				tbody.append(tr);
+				let tdChilds = tr.getElementsByTagName("td");
+				for(let i=0;i<tdChilds.length;i++) {
+					let style = "border: 1px solid;";
+					tdChilds[i].setAttribute("style",style);
+					tdChilds[i].setAttribute("contenteditable","true");
+				}
+				
+				tableChangeMode = "ADD";
 			}
 		
 			function startEditMode(clickedBtn) {
@@ -103,38 +154,104 @@
 				confirmBtn.style.display = "initial";
 				let cancelBtn = document.getElementById("cancelBtn" + id);
 				cancelBtn.style.display = "initial";
+				tableChangeMode = "EDIT";
 			}
 			
-			function confirmEdit() {
-				let id = currentCellSelection*1+1;
-				let loadUri = 'http://localhost:8080/api/products/' + id;
-				let tr = document.getElementById("tr"+currentCellSelection);
-				let trChilds = tr.getElementsByTagName("td");
-				let updateObject = {
+			function startDeleteMode(clickedBtn) {
+				resetCellSelection();
+				let id = clickedBtn.id.substring(9);
+				currentCellSelection = id;
+				let editBtn = document.getElementById("editBtn" + id);
+				editBtn.style.display = "none";
+				let deleteBtn = document.getElementById("deleteBtn" + id);
+				deleteBtn.style.display = "none";
+				let confirmBtn = document.getElementById("confirmBtn" + id);
+				confirmBtn.style.display = "initial";
+				let cancelBtn = document.getElementById("cancelBtn" + id);
+				cancelBtn.style.display = "initial";
+				tableChangeMode = "DELETE";
+			}
+			
+			function onConfirm() {
+				if(tableChangeMode == "EDIT") {
+					let id = currentCellSelection*1+1;
+					let loadUri = 'http://localhost:8080/api/products/' + id;
+					let tr = document.getElementById("tr"+currentCellSelection);
+					let trChilds = tr.getElementsByTagName("td");
+					let updateObject = {
+							name: trChilds[1].innerHTML,
+							description: trChilds[2].innerHTML,
+							price: trChilds[3].innerHTML,
+							currency: trChilds[4].innerHTML,
+							provider: trChilds[5].innerHTML,
+					};
+					
+					fetch(loadUri, {
+					      method: 'PUT',
+					      headers: {
+					        'Content-Type': 'application/json',
+					      },
+					      body: JSON.stringify(updateObject),
+					    })
+					      .then(response => response.text())
+					      .then(outputData => {
+					    	  console.log(outputData);
+					      });
+					
+					resetCellSelection();
+				} else if(tableChangeMode == "DELETE") {
+					let id = currentCellSelection*1+1;
+					let deleteUri = 'http://localhost:8080/api/products/' + id;
+					
+					fetch(deleteUri,{
+						method: 'DELETE'
+					})
+						.then(response => response.text())
+						.then(outputData => {
+							console.log(outputData);
+							loadProductData();
+						});
+				} else if(tableChangeMode == "ADD") {
+					let createUri = 'http://localhost:8080/api/products';
+					let tbody = document.getElementById("productTable").getElementsByTagName("tbody")[0];
+					let tbodyTrChilds = tbody.getElementsByTagName("tr");
+					let submitTr = document.getElementById("tr" + (tbodyTrChilds.length - 1 + currentPage*2));
+					let trChilds = submitTr.getElementsByTagName("td");
+					let submitObj = {
+						id: trChilds[0].innerHTML,
 						name: trChilds[1].innerHTML,
 						description: trChilds[2].innerHTML,
-						price: -1,
-						currency: "VND",
-						provider: "sample hard data",
-				};
-				
-				fetch(loadUri, {
-				      method: 'PUT',
-				      headers: {
-				        'Content-Type': 'application/json',
-				      },
-				      body: JSON.stringify(updateObject),
-				    })
-				      .then(response => response.text())
-				      .then(outputData => {
-				    	  console.log(outputData);
-				      });
-				
-				resetCellSelection();
+						price: trChilds[3].innerHTML,
+						currency: trChilds[4].innerHTML,
+						provider: trChilds[5].innerHTML,
+					};
+					
+					fetch(createUri,{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(submitObj)
+					})
+						.then(response => response.text())
+						.then(outputData => {
+							console.log(outputData);
+							tableChangeMode = "VIEW";
+							loadProductData();
+						});
+				}
 			}
 			
-			function cancelEdit() {
-				resetCellSelection();
+			function onCancel() {
+				if(tableChangeMode == "ADD") {
+					let tbody = document.getElementById("productTable").getElementsByTagName("tbody")[0];
+					let tbodyTrChilds = tbody.getElementsByTagName("tr");
+					let submitTr = document.getElementById("tr" + (tbodyTrChilds.length - 1 + currentPage*2));
+					submitTr.remove();
+					tableChangeMode = "VIEW";
+				}
+				else 
+					resetCellSelection();
 			}
 			
 			function loadProductData() {
@@ -171,15 +288,17 @@
 				    	  					let deleteBtn = document.createElement("button");
 				    	  					deleteBtn.innerHTML = "del";
 				    	  					deleteBtn.setAttribute("id", "deleteBtn" + (i + currentPage*2));
+				    	  					deleteBtn.setAttribute("onclick","startDeleteMode(this)");
+				    	  					deleteBtn.setAttribute("style","margin-right:10px;");
 				    	  					let confirmBtn = document.createElement("button");
 				    	  					confirmBtn.innerHTML = "confirm";
 				    	  					confirmBtn.setAttribute("id", "confirmBtn" + (i + currentPage*2));
-				    	  					confirmBtn.setAttribute("onclick","confirmEdit()");
+				    	  					confirmBtn.setAttribute("onclick","onConfirm()");
 				    	  					confirmBtn.setAttribute("style","margin-right:10px;");
 				    	  					let cancelBtn = document.createElement("button");
 				    	  					cancelBtn.innerHTML = "cancel";
 				    	  					cancelBtn.setAttribute("id", "cancelBtn" + (i + currentPage*2));
-				    	  					cancelBtn.setAttribute("onclick","cancelEdit()");
+				    	  					cancelBtn.setAttribute("onclick","onCancel()");
 				    	  					cancelBtn.setAttribute("style","margin-right:10px;");
 				    	  					div.append(editBtn);
 				    	  					div.append(deleteBtn);
@@ -195,12 +314,18 @@
 				    	  					let td_3 = document.createElement("td");
 				    	  					td_3.innerHTML = dataList[i].description;
 				    	  					let td_4 = document.createElement("td");
-				    	  					td_4.innerHTML = dataList[i].price + " " + dataList[i].currency;
+				    	  					td_4.innerHTML = dataList[i].price;
+				    	  					let td_5 = document.createElement("td");
+				    	  					td_5.innerHTML = dataList[i].currency;
+				    	  					let td_6 = document.createElement("td");
+				    	  					td_6.innerHTML = dataList[i].provider;
 				    	  					tr.append(th);
 				    	  					tr.append(td_1);
 				    	  					tr.append(td_2);
 				    	  					tr.append(td_3);
 				    	  					tr.append(td_4);
+				    	  					tr.append(td_5);
+				    	  					tr.append(td_6);
 				    	  					tbody.append(tr);
 				    	  				}
 				    	  				table.append(tbody);
