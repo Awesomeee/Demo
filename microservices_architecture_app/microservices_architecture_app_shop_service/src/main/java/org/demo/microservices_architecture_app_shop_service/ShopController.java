@@ -6,22 +6,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ShopController {
 	
-	@GetMapping("/aaa")
+	@GetMapping("/api/aaa")
 	public String aaa() {
 		return "aaa";
 	}
 	
-	@GetMapping("/aab")
+	@GetMapping("/api/aab")
 	public String aab() {
 		return "aab";
 	}
 	
-	@GetMapping("/aac")
+	@GetMapping("/api/aac")
 	public String aac() {
 		return "aac";
 	}
 	
-	@GetMapping("/aad")
+	@GetMapping("/api/aad")
 	public String aad() {
 		return "aad";
 	}
