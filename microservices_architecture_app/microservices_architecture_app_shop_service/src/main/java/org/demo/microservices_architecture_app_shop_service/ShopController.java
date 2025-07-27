@@ -8,6 +8,7 @@ public class ShopController {
 	
 	@GetMapping("/api/aaa")
 	public String aaa() {
+		System.out.println("service aaa from shop service called");
 		return "aaa";
 	}
 	
