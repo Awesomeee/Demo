@@ -103,5 +103,31 @@ public class ShopStoreRestfulApi {
 		return result;
 		
 	}
+	
+	@PostMapping(path = "/test2")
+	public String test2(@RequestBody HashMap<String, String> inputData) {
+		
+		String result = "";
+		for(String data: inputData.keySet()) {
+			result = result + data + ":" + inputData.get(data)+"; ";
+			
+		}
+		
+		return result;
+		
+	}
+	
+	@PostMapping(path = "/test3")
+	public String test3(@RequestBody HashMap<String, String> inputData) {
+		
+		String result = "";
+		for(String data: inputData.keySet()) {
+			result = result + data + ":" + inputData.get(data)+"; ";
+			
+		}
+		
+		return result;
+		
+	}
 
 }
