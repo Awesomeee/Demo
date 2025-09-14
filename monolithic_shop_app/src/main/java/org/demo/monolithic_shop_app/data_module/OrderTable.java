@@ -27,7 +27,6 @@ public class OrderTable {
 	private long afterTaxTotal;		//tổng tiền sau thuế
 	@Column
 	private String currency;
-	//note - table orders also has a ItemList attribute which is a relation in other entity
 	
 	public OrderTable() {}
 	

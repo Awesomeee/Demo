@@ -1,6 +1,5 @@
 package org.demo.monolithic_shop_app.data_module;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -27,6 +26,7 @@ public class ProductTable {
 	
 	@Column
 	private String provider;
+	
 	
 	public ProductTable() {}
 	
@@ -86,4 +86,5 @@ public class ProductTable {
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
+
 }

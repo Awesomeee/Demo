@@ -8,16 +8,23 @@ public class User {
 	private String email;
 	private String phoneNumber;
 	private String address;
+	private String role;
+	private String privilege;
+	private String team;
 	
 	public User() {}
 	
-	public User(String userId, String userName, String userPassword, String email, String phoneNumber, String address) {
+	public User(String userId, String userName, String userPassword, String email, String phoneNumber, String address
+			,String role, String privilege, String team) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userPassword = userPassword;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
+		this.role = role;
+		this.privilege = privilege;
+		this.team = team;
 	}
 	
 	public String getUserId() {
@@ -55,6 +62,30 @@ public class User {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getPrivilege() {
+		return privilege;
+	}
+
+	public void setPrivilege(String privilege) {
+		this.privilege = privilege;
+	}
+
+	public String getTeam() {
+		return team;
+	}
+
+	public void setTeam(String team) {
+		this.team = team;
 	}
 
 }
