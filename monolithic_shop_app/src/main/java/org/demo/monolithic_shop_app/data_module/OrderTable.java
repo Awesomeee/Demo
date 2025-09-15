@@ -1,6 +1,6 @@
 package org.demo.monolithic_shop_app.data_module;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ public class OrderTable {
 	@Id
 	private String orderId;
 	@Column
-	private Date createdDate;
+	private LocalDateTime createdDateTime;
 	@Column
 	private String createdPerson;	//employeeId
 	@Column
@@ -30,10 +30,10 @@ public class OrderTable {
 	
 	public OrderTable() {}
 	
-	public OrderTable(String orderId, Date createdDate, String createdPerson, String customer, long beforeTaxTotal
+	public OrderTable(String orderId, LocalDateTime createdDateTime, String createdPerson, String customer, long beforeTaxTotal
 			, float taxRatio, long afterTaxTotal, String currency) {
 		this.orderId = orderId;
-		this.createdDate = createdDate;
+		this.createdDateTime = createdDateTime;
 		this.createdPerson = createdPerson;
 		this.customer = customer;
 		this.beforeTaxTotal = beforeTaxTotal;
@@ -48,11 +48,11 @@ public class OrderTable {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	public Date getCreatedDate() {
-		return createdDate;
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
 	}
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 	public String getCreatedPerson() {
 		return createdPerson;
