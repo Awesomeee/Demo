@@ -9,7 +9,7 @@ public class Order {
 	private Date createdDate;
 	private String createdPerson;	//employeeId
 	private String customer;		//customerId
-	private List<Item> itemList;
+	private List<OrderItem> itemList;
 	private long beforeTaxTotal;		//tổng tiền trước thuế
 	private float taxRatio;
 	private long afterTaxTotal;		//tổng tiền sau thuế
@@ -17,7 +17,7 @@ public class Order {
 	
 	public Order() {}
 	
-	public Order(String orderId, Date createdDate, String createdPerson, String customer, List<Item> itemList, long beforeTaxTotal
+	public Order(String orderId, Date createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
 			, float taxRatio, long afterTaxTotal, String currency) {
 		this.orderId = orderId;
 		this.createdDate = createdDate;
@@ -42,10 +42,10 @@ public class Order {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
-	public List<Item> getItemList() {
+	public List<OrderItem> getItemList() {
 		return itemList;
 	}
-	public void setItemList(List<Item> itemList) {
+	public void setItemList(List<OrderItem> itemList) {
 		this.itemList = itemList;
 	}
 	public String getCreatedPerson() {

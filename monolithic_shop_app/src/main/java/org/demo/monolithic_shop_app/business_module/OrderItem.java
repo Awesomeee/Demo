@@ -1,6 +1,6 @@
 package org.demo.monolithic_shop_app.business_module;
 
-public class Item {
+public class OrderItem {
 	
 	private int number;
 	private Product product;
@@ -9,9 +9,9 @@ public class Item {
 	//thanh tien
 	private long amount;
 	
-	public Item() {}
+	public OrderItem() {}
 	
-	public Item(int number, Product product, int quantity, long amount) {
+	public OrderItem(int number, Product product, int quantity, long amount) {
 		this.number = number;
 		this.product = product;
 		this.quanity = quantity;
