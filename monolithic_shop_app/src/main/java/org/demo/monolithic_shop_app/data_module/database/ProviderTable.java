@@ -1,4 +1,4 @@
-package org.demo.monolithic_shop_app.data_module;
+package org.demo.monolithic_shop_app.data_module.database;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

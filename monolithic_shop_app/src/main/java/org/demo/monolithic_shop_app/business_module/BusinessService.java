@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.demo.monolithic_shop_app.data_module.ProductTable;
-import org.demo.monolithic_shop_app.data_module.ProductTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.ProductTable;
+import org.demo.monolithic_shop_app.data_module.database.ProductTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

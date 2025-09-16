@@ -1,5 +1,4 @@
-package org.demo.monolithic_shop_app.data_module;
-
+package org.demo.monolithic_shop_app.data_module.database;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,8 +8,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "OrderSaleItems")
-public class OrderSaleItemTable {
+@Table(name = "OrderPurchaseItems")
+public class OrderPurchaseItemTable {
 	
 	@Id
 	private String itemId;
@@ -20,8 +19,9 @@ public class OrderSaleItemTable {
 	@ManyToOne
 	@JoinColumn(name = "productId")
 	private ProductTable product;
-	@Column
-	private String customerId;
+	@ManyToOne
+	@JoinColumn(name = "providerId")
+	private ProviderTable provider;
 	@Column
 	private int number;
 	//so luong
@@ -31,17 +31,17 @@ public class OrderSaleItemTable {
 	@Column
 	private long amount;
 	
-	public OrderSaleItemTable() {}
+	public OrderPurchaseItemTable() {}
 	
-	public OrderSaleItemTable(String itemId, OrderTable order, ProductTable product, int number, int quantity
-			, long amount, String customerId) {
+	public OrderPurchaseItemTable(String itemId, OrderTable order, ProductTable product, int number, int quantity
+			, long amount, ProviderTable provider) {
 		this.itemId = itemId;
 		this.order = order;
 		this.product = product;
 		this.number = number;
 		this.quanity = quantity;
 		this.amount = amount;
-		this.customerId = customerId;
+		this.provider = provider;
 	}
 	
 	public String getItemId() {
@@ -83,12 +83,12 @@ public class OrderSaleItemTable {
 		this.product = product;
 	}
 
-	public String getCustomerId() {
-		return customerId;
+	public ProviderTable getProvider() {
+		return provider;
 	}
 
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setProvider(ProviderTable provider) {
+		this.provider = provider;
 	}
 
 }
