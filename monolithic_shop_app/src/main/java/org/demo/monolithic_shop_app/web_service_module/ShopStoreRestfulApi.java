@@ -3,8 +3,8 @@ package org.demo.monolithic_shop_app.web_service_module;
 import java.util.HashMap;
 
 import org.demo.monolithic_shop_app.business_module.BusinessService;
-import org.demo.monolithic_shop_app.business_module.Product;
-import org.demo.monolithic_shop_app.business_module.ProductList;
+import org.demo.monolithic_shop_app.business_module.product.Product;
+import org.demo.monolithic_shop_app.business_module.product.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +42,7 @@ public class ShopStoreRestfulApi {
 	@GetMapping(path = "/api/products")
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.OK)
-	public ProductList queryProductList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
+	public ProductDto queryProductList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
 		/*try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {

@@ -1,13 +1,18 @@
-package org.demo.monolithic_shop_app.business_module;
+package org.demo.monolithic_shop_app.business_module.product;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductList {
+/*
+ * author: duyl
+ * created date: Wed 17 Sep, 2025
+ * Dto: Data transfer object
+ */
+public class ProductDto {
 	
 	private List<Product> products;
 	
-	public ProductList() {
+	public ProductDto() {
 		products = new ArrayList<Product>();
 		products.add(new Product("p1", "product 1", "description 1", 10000, "VND", "provider 1"));
 		products.add(new Product("p2", "product 2", "description 2", 20000, "VND", "provider 2"));

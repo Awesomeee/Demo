@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import org.demo.monolithic_shop_app.business_module.product.Product;
+import org.demo.monolithic_shop_app.business_module.product.ProductDto;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.demo.monolithic_shop_app.data_module.database.ProductTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +21,21 @@ public class BusinessService {
 	@Autowired
 	private ProductTableRepository productTableRepository;
 
-	private ProductList products;
+	private ProductDto products;
 	
 	public BusinessService() {
-		setProducts(new ProductList());
+		setProducts(new ProductDto());
 	}
 
-	public ProductList getProducts() {
+	public ProductDto getProducts() {
 		return products;
 	}
 
-	public void setProducts(ProductList products) {
+	public void setProducts(ProductDto products) {
 		this.products = products;
 	}
 	
-	public ProductList queryAllProducts(int pageNumber, int pageSize, String sortType, String direction) {
+	public ProductDto queryAllProducts(int pageNumber, int pageSize, String sortType, String direction) {
 		Sort sort = Sort.by(sortType);
 		if(direction.equals("asc")) {
 			sort = sort.ascending();
@@ -53,7 +55,7 @@ public class BusinessService {
 			
 			products.add(element);
 		}
-		ProductList result = new ProductList();
+		ProductDto result = new ProductDto();
 		result.setProducts(products);
 		return result;
 	}

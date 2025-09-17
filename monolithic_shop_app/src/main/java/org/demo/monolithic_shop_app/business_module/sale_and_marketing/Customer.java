@@ -1,4 +1,4 @@
-package org.demo.monolithic_shop_app.business_module;
+package org.demo.monolithic_shop_app.business_module.sale_and_marketing;
 
 import org.demo.monolithic_shop_app.security_module.User;
 

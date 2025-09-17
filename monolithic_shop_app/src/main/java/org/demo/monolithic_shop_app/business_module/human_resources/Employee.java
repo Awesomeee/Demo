@@ -1,4 +1,4 @@
-package org.demo.monolithic_shop_app.business_module;
+package org.demo.monolithic_shop_app.business_module.human_resources;
 
 import java.time.LocalDateTime;
 
