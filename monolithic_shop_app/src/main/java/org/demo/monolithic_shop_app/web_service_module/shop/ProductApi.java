@@ -1,4 +1,4 @@
-package org.demo.monolithic_shop_app.web_service_module;
+package org.demo.monolithic_shop_app.web_service_module.shop;
 
 import java.util.HashMap;
 
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ShopStoreRestfulApi {
+public class ProductApi {
 	
 	@Autowired
 	private BusinessService businessService;
@@ -89,6 +89,23 @@ public class ShopStoreRestfulApi {
 	public String deleteProductResource(@PathVariable(name = "product-id", required = true) String productId) {
 		int result = businessService.deleteProductById(productId);
 		return result + "";
+	}
+	
+	//note to remember: need to implement 4 more api: submit in batch, update in batch, delete in batch, analyze the resource(how many resource that exist? how many categories and sub categories of it?)
+	public String addAListOfProductResources() {
+		return "ok";
+	}
+	
+	public String updateAListOfProductResources() {
+		return "ok";
+	}
+	
+	public String deleteAListOfProductResources() {
+		return "ok";
+	}
+	
+	public String analizeProductResources() {
+		return "ok";
 	}
 	
 	@PostMapping(path = "/test")
