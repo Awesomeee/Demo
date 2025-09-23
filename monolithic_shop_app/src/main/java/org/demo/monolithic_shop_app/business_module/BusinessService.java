@@ -15,11 +15,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+
 @Service(value = "BusinessBean")
 public class BusinessService {
 	
 	@Autowired
 	private ProductTableRepository productTableRepository;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	private ProductDto products;
 	
@@ -87,6 +94,29 @@ public class BusinessService {
 			System.err.println(e.getMessage());
 		}
 		return result;
+	}
+	
+	public List<ProductTable> queryProductByDynamicallyConditions(HashMap<String, String> conditions) {
+		String jpql = "SELECT p FROM ProductTable p Where ";
+		boolean firstCondition = true;
+		for(String data: conditions.keySet()) {
+			if(firstCondition) {
+				jpql = jpql + "p." + data + " = :" + data + " ";
+				firstCondition = false;
+			} else {
+				jpql = jpql + "AND p." + data + " = :" + data + " ";
+			}
+			
+		}
+		
+		System.out.println(jpql);
+		TypedQuery<ProductTable> query = entityManager.createQuery(jpql, ProductTable.class);
+		for(String data: conditions.keySet()) {
+			query.setParameter(data, conditions.get(data));
+		}
+		
+		
+		return query.getResultList();
 	}
 	
 	public int updatePartialProduct(String id, HashMap<String, String> updateDatas) {

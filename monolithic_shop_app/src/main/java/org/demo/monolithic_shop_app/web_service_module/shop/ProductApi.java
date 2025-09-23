@@ -1,10 +1,12 @@
 package org.demo.monolithic_shop_app.web_service_module.shop;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.demo.monolithic_shop_app.business_module.BusinessService;
 import org.demo.monolithic_shop_app.business_module.product.Product;
 import org.demo.monolithic_shop_app.business_module.product.ProductDto;
+import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,10 +60,10 @@ public class ProductApi {
 		return result + "";
 	}
 	
-	@GetMapping(path = "/api/products/{product-category}")
+	@GetMapping(path = "/api/products/conditions")
 	@ResponseStatus(code = HttpStatus.OK)
-	public String queryProductListByCategory() {
-		return "result";
+	public List<ProductTable> queryProductListByConditions(@RequestBody(required = true) HashMap<String, String> conditionMap) {
+		return businessService.queryProductByDynamicallyConditions(conditionMap);
 	}
 	
 	@GetMapping(path = "/api/products/{product-id}")
@@ -122,29 +124,12 @@ public class ProductApi {
 	}
 	
 	@PostMapping(path = "/test2")
-	public String test2(@RequestBody HashMap<String, String> inputData) {
+	public List<ProductTable> test2(@RequestBody HashMap<String, String> inputData) {
 		
-		String result = "";
-		for(String data: inputData.keySet()) {
-			result = result + data + ":" + inputData.get(data)+"; ";
-			
-		}
 		
-		return result;
+		return businessService.queryProductByDynamicallyConditions(inputData);
 		
 	}
 	
-	@PostMapping(path = "/test3")
-	public String test3(@RequestBody HashMap<String, String> inputData) {
-		
-		String result = "";
-		for(String data: inputData.keySet()) {
-			result = result + data + ":" + inputData.get(data)+"; ";
-			
-		}
-		
-		return result;
-		
-	}
 
 }

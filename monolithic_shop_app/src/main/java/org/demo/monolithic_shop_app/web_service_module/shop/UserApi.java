@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 public class UserApi {
@@ -30,7 +31,7 @@ public class UserApi {
 	}
 	
 	@PostMapping("/api/users")
-	public String addUser(@RequestBody(required = true) UserDto user) {
+	public String addUser(@Valid @RequestBody(required = true) UserDto user) {
 		return "empty";
 	}
 	

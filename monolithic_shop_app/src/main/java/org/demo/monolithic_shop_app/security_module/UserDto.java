@@ -1,7 +1,10 @@
 package org.demo.monolithic_shop_app.security_module;
 
+import jakarta.validation.constraints.NotNull;
+
 public class UserDto {
 	
+	@NotNull
 	private String userId;
 	private String userName;
 	private String userPassword;
