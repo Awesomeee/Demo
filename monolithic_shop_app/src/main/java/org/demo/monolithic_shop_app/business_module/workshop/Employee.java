@@ -1,10 +1,10 @@
-package org.demo.monolithic_shop_app.business_module.human_resources;
+package org.demo.monolithic_shop_app.business_module.workshop;
 
 import java.time.LocalDateTime;
 
 import org.demo.monolithic_shop_app.security_module.User;
 
-public class EmployeeDto {
+public class Employee {
 	
 	private String employeeId;
 	private String employeeName;
@@ -15,9 +15,9 @@ public class EmployeeDto {
 	private LocalDateTime onboardDateTime;
 	private User user;
 	
-	public EmployeeDto() {}
+	public Employee() {}
 	
-	public EmployeeDto(String employeeId, String employeeName, String phoneNumber, String identityNumber, String address, String email
+	public Employee(String employeeId, String employeeName, String phoneNumber, String identityNumber, String address, String email
 			, LocalDateTime onboardDateTime, User user) {
 		this.employeeId = employeeId;
 		this.employeeName = employeeName;

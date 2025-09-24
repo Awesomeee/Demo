@@ -1,6 +1,6 @@
-package org.demo.monolithic_shop_app.business_module.product;
+package org.demo.monolithic_shop_app.business_module.workshop;
 
-public class Provider {
+public class ProviderDto {
 	
 	private String providerId;
 	private String providerName;
@@ -9,9 +9,9 @@ public class Provider {
 	private String email;
 	private String representativeName;
 	
-	public Provider() {}
+	public ProviderDto() {}
 	
-	public Provider(String providerId, String providerName, String phoneNumber, String address, String email
+	public ProviderDto(String providerId, String providerName, String phoneNumber, String address, String email
 			, String representativeName) {
 		this.providerId = providerId;
 		this.providerName = providerName;

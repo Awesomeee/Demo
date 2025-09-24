@@ -1,8 +1,8 @@
-package org.demo.monolithic_shop_app.business_module.sale_and_marketing;
+package org.demo.monolithic_shop_app.business_module.shop;
 
 import org.demo.monolithic_shop_app.security_module.User;
 
-public class CustomerDto {
+public class Customer {
 	
 	private String customerId;
 	private String customerName;
@@ -12,9 +12,9 @@ public class CustomerDto {
 	private String identityNumber;		// căn cước công dân
 	private User user;
 	
-	public CustomerDto() {}
+	public Customer() {}
 	
-	public CustomerDto(String customerId, String customerName, String phoneNumber, String email, String address
+	public Customer(String customerId, String customerName, String phoneNumber, String email, String address
 			, String identityNumber, User user) {
 		this.customerId = customerId;
 		this.customerName = customerName;

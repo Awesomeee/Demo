@@ -1,4 +1,4 @@
-package org.demo.monolithic_shop_app.business_module.product;
+package org.demo.monolithic_shop_app.business_module.workshop;
 
 import java.util.ArrayList;
 import java.util.List;

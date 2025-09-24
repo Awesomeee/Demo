@@ -2,7 +2,7 @@ package org.demo.monolithic_shop_app.web_service_module.workshop;
 
 import java.util.HashMap;
 
-import org.demo.monolithic_shop_app.business_module.human_resources.EmployeeDto;
+import org.demo.monolithic_shop_app.business_module.workshop.EmployeeDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

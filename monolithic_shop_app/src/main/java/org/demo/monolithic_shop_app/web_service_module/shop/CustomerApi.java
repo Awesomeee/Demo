@@ -1,6 +1,6 @@
 package org.demo.monolithic_shop_app.web_service_module.shop;
 
-import org.demo.monolithic_shop_app.business_module.sale_and_marketing.CustomerDto;
+import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

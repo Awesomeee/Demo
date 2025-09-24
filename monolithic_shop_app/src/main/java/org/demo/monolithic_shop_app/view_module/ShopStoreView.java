@@ -16,6 +16,7 @@ public class ShopStoreView {
 		if(mode == "SIMPLE")
 			return "shop_simple_gui";
 		else if(mode == "EXQUISITE")
+			//for future update, currently it is just an empty page
 			return "shop_exquisite_gui";
 		else {
 			//default

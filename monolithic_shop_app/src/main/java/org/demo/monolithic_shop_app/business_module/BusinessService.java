@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.demo.monolithic_shop_app.business_module.product.Product;
-import org.demo.monolithic_shop_app.business_module.product.ProductDto;
+import org.demo.monolithic_shop_app.business_module.workshop.Product;
+import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.demo.monolithic_shop_app.data_module.database.ProductTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
