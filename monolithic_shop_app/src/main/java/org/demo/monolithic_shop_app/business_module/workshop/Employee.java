@@ -4,12 +4,17 @@ import java.time.LocalDateTime;
 
 import org.demo.monolithic_shop_app.security_module.User;
 
+import jakarta.validation.constraints.Size;
+
 public class Employee {
 	
 	private String employeeId;
+	@Size(min = 5, max = 45)
 	private String employeeName;
+	@Size(min = 10, max = 11)
 	private String phoneNumber;
 	private String identityNumber;		//căn cước công dân
+	@Size(max = 100)
 	private String address;
 	private String email;
 	private LocalDateTime onboardDateTime;

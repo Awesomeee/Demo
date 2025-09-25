@@ -1,9 +1,9 @@
-package org.demo.monolithic_shop_app.business_module.shop;
+package org.demo.monolithic_shop_app.business_module.workshop;
 
 import java.util.Date;
 import java.util.List;
 
-public class OrderDto {
+public class Order {
 	
 	private String orderId;
 	private Date createdDate;
@@ -15,9 +15,9 @@ public class OrderDto {
 	private long afterTaxTotal;		//tổng tiền sau thuế
 	private String currency;
 	
-	public OrderDto() {}
+	public Order() {}
 	
-	public OrderDto(String orderId, Date createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
+	public Order(String orderId, Date createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
 			, float taxRatio, long afterTaxTotal, String currency) {
 		this.orderId = orderId;
 		this.createdDate = createdDate;

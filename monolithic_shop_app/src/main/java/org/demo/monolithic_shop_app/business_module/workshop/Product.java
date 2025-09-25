@@ -1,9 +1,12 @@
 package org.demo.monolithic_shop_app.business_module.workshop;
 
+import jakarta.validation.constraints.Size;
+
 public class Product {
 	
 	private String id;
 	private String name;
+	@Size(min = 0, max = 255)
 	private String description;
 	private long price;
 	private String currency;

@@ -1,6 +1,4 @@
-package org.demo.monolithic_shop_app.business_module.shop;
-
-import org.demo.monolithic_shop_app.business_module.workshop.Product;
+package org.demo.monolithic_shop_app.business_module.workshop;
 
 public class OrderItem {
 	
