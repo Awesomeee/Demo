@@ -11,10 +11,12 @@ public class Product {
 	private long price;
 	private String currency;
 	private String provider;
+	private ProductDetail productDetail;
 	
 	public Product() {}
 	
-	public Product(String id, String name, String description, long price, String currency, String provider) {
+	public Product(String id, String name, String description, long price, String currency, String provider
+			, ProductDetail productDetail) {
 		if(id != null)
 			this.id = id;
 		if(name != null)
@@ -26,6 +28,8 @@ public class Product {
 			this.currency = currency;
 		if(provider != null)
 			this.provider = provider;
+		if(productDetail != null)
+			this.productDetail = productDetail;
 	}
 	
 	public String getId() {
@@ -63,6 +67,14 @@ public class Product {
 	}
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+
+	public ProductDetail getProductDetail() {
+		return productDetail;
+	}
+
+	public void setProductDetail(ProductDetail productDetail) {
+		this.productDetail = productDetail;
 	}
 
 }

@@ -14,11 +14,11 @@ public class ProductDto {
 	
 	public ProductDto() {
 		products = new ArrayList<Product>();
-		products.add(new Product("p1", "product 1", "description 1", 10000, "VND", "provider 1"));
-		products.add(new Product("p2", "product 2", "description 2", 20000, "VND", "provider 2"));
-		products.add(new Product("p3", "product 3", "description 3", 30000, "VND", "provider 3"));
-		products.add(new Product("p4", "product 4", "description 4", 40000, "VND", "provider 4"));
-		products.add(new Product("p5", "product 5", "description 5", 50000, "VND", "provider 5"));
+		products.add(new Product("p1", "product 1", "description 1", 10000, "VND", "provider 1", null));
+		products.add(new Product("p2", "product 2", "description 2", 20000, "VND", "provider 2", null));
+		products.add(new Product("p3", "product 3", "description 3", 30000, "VND", "provider 3", null));
+		products.add(new Product("p4", "product 4", "description 4", 40000, "VND", "provider 4", null));
+		products.add(new Product("p5", "product 5", "description 5", 50000, "VND", "provider 5", null));
 	}
 
 	public List<Product> getProducts() {
