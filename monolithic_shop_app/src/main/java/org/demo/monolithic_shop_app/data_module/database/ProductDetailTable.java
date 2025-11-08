@@ -33,12 +33,10 @@ public class ProductDetailTable {
 	@Column
 	private String brandName;
 	
-	private List<String> imageUrlList;
-	
 	public ProductDetailTable() {}
 	
 	public ProductDetailTable(ProductTable product, String colorCode, String colorName, String sizeCode, String sizeName
-						, String descriptionDetail, String brandCode, String brandName, List<String> imageUrlList)
+						, String descriptionDetail, String brandCode, String brandName)
 	{
 		this.product = product;
 		this.colorCode = colorCode;
@@ -48,7 +46,6 @@ public class ProductDetailTable {
 		this.descriptionDetail = descriptionDetail;
 		this.brandCode = brandCode;
 		this.brandName = brandName;
-		this.imageUrlList = imageUrlList;
 	}
 	
 	public ProductTable getProduct() {
@@ -98,12 +95,6 @@ public class ProductDetailTable {
 	}
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
-	}
-	public List<String> getImageUrlList() {
-		return imageUrlList;
-	}
-	public void setImageUrlList(List<String> imageUrlList) {
-		this.imageUrlList = imageUrlList;
 	}
 
 	public String getId() {
