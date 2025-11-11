@@ -31,7 +31,9 @@ public class MailBoxTable {
 	@JoinColumn(name = "userId")
 	private UserTable user;
 	
-	public MailBoxTable() {}
+	public MailBoxTable() {
+		
+	}
 	
 	public MailBoxTable(String mailId, String subject, LocalDateTime createdDateTime, String fromUser, String toUser, String message, String state
 			, UserTable user) {
