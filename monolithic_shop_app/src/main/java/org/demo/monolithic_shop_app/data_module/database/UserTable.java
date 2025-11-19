@@ -27,11 +27,13 @@ public class UserTable {
 	private String privilege;
 	@Column
 	private String team;
+	@Column
+	private String state;
 	
 	public UserTable() {}
 	
 	public UserTable(String userId, String userName, String userPassword, String email, String phoneNumber, String address
-			,String role, String privilege, String team) {
+			,String role, String privilege, String team, String state) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userPassword = userPassword;
@@ -41,6 +43,7 @@ public class UserTable {
 		this.role = role;
 		this.privilege = privilege;
 		this.team = team;
+		this.state = state;
 	}
 
 	public String getUserId() {
@@ -113,6 +116,14 @@ public class UserTable {
 
 	public void setTeam(String team) {
 		this.team = team;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }

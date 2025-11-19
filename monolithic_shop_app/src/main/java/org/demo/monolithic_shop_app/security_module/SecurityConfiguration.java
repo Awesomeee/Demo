@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -11,6 +14,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration {
 
 	/*
@@ -74,5 +78,24 @@ public class SecurityConfiguration {
     @Bean
     MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
         return new MvcRequestMatcher.Builder(introspector);
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+		//plain text
+		/*
+		return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                return rawPassword.toString(); // Return the raw password as is
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                return rawPassword.toString().equals(encodedPassword); // Compare raw password with stored password
+            }
+        };
+        */
+		return new BCryptPasswordEncoder();
     }
 }

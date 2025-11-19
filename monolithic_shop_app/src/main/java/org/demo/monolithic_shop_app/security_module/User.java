@@ -11,11 +11,12 @@ public class User {
 	private String role;
 	private String privilege;
 	private String team;
+	private String state;			//REQUESTING, ACTIVE, INACTIVE, SUSPENDED, TERMINATED
 	
 	public User() {}
 	
 	public User(String userId, String userName, String userPassword, String email, String phoneNumber, String address
-			,String role, String privilege, String team) {
+			,String role, String privilege, String team, String state) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userPassword = userPassword;
@@ -25,6 +26,7 @@ public class User {
 		this.role = role;
 		this.privilege = privilege;
 		this.team = team;
+		this.state = state;
 	}
 	
 	public String getUserId() {
@@ -86,6 +88,14 @@ public class User {
 
 	public void setTeam(String team) {
 		this.team = team;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }

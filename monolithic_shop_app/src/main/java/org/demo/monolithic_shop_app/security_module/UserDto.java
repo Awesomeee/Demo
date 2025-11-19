@@ -14,11 +14,12 @@ public class UserDto {
 	private String role;
 	private String privilege;
 	private String team;
+	private String state;
 	
 	public UserDto() {}
 	
 	public UserDto(String userId, String userName, String userPassword, String email, String phoneNumber, String address
-			,String role, String privilege, String team) {
+			,String role, String privilege, String team, String state) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userPassword = userPassword;
@@ -28,6 +29,7 @@ public class UserDto {
 		this.role = role;
 		this.privilege = privilege;
 		this.team = team;
+		this.state = state;
 	}
 	
 	public String getUserId() {
@@ -89,6 +91,14 @@ public class UserDto {
 
 	public void setTeam(String team) {
 		this.team = team;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }
