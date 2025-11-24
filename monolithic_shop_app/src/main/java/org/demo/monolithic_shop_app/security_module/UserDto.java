@@ -1,104 +1,20 @@
 package org.demo.monolithic_shop_app.security_module;
 
-import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 public class UserDto {
 	
-	@NotNull
-	private String userId;
-	private String userName;
-	private String userPassword;
-	private String email;
-	private String phoneNumber;
-	private String address;
-	private String role;
-	private String privilege;
-	private String team;
-	private String state;
+	private List<User> users;
 	
 	public UserDto() {}
 	
-	public UserDto(String userId, String userName, String userPassword, String email, String phoneNumber, String address
-			,String role, String privilege, String team, String state) {
-		this.userId = userId;
-		this.userName = userName;
-		this.userPassword = userPassword;
-		this.email = email;
-		this.phoneNumber = phoneNumber;
-		this.address = address;
-		this.role = role;
-		this.privilege = privilege;
-		this.team = team;
-		this.state = state;
-	}
-	
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	public String getUserPassword() {
-		return userPassword;
-	}
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
+
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public String getPrivilege() {
-		return privilege;
-	}
-
-	public void setPrivilege(String privilege) {
-		this.privilege = privilege;
-	}
-
-	public String getTeam() {
-		return team;
-	}
-
-	public void setTeam(String team) {
-		this.team = team;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 }
