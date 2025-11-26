@@ -1,12 +1,12 @@
 package org.demo.monolithic_shop_app.business_module.workshop;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
 	
 	private String orderId;
-	private Date createdDate;
+	private LocalDateTime createdDate;
 	private String createdPerson;	//employeeId
 	private String customer;		//customerId
 	private List<OrderItem> itemList;
@@ -17,7 +17,7 @@ public class Order {
 	
 	public Order() {}
 	
-	public Order(String orderId, Date createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
+	public Order(String orderId, LocalDateTime createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
 			, float taxRatio, long afterTaxTotal, String currency) {
 		this.orderId = orderId;
 		this.createdDate = createdDate;
@@ -36,10 +36,10 @@ public class Order {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}
-	public Date getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 	public List<OrderItem> getItemList() {

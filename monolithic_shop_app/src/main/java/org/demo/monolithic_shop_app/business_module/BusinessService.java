@@ -10,6 +10,7 @@ import org.demo.monolithic_shop_app.business_module.shop.Customer;
 import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Order;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
+import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
@@ -298,7 +299,40 @@ public class BusinessService {
 	
 	//Order Section
 	public OrderDto queryAllOrders(int pageNumber, int pageSize, String sortType, String direction) {
-		return null;
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<OrderTable> rows = orderTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<Order> orders = new ArrayList<Order>();
+		for(int i=0; i<rows.size();i++) {
+			Order element = new Order();
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setAfterTaxTotal(rows.get(i).getAfterTaxTotal());
+			element.setBeforeTaxTotal(rows.get(i).getBeforeTaxTotal());
+			element.setCreatedDate(rows.get(i).getCreatedDateTime());
+			element.setCreatedPerson(rows.get(i).getCreatedPerson());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setCustomer(rows.get(i).getCustomer());
+			element.setTaxRatio(rows.get(i).getTaxRatio());
+			
+			List<OrderItem> oiList = new ArrayList<OrderItem>();
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			for(int j=0;j<saleItemList.size();j++) {
+				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
+						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
+						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				oiList.add(item);
+			}
+			element.setItemList(oiList);
+			
+			orders.add(element);
+		}
+		OrderDto result = new OrderDto();
+		result.setOrders(orders);
+		return result;
 	}
 	
 	@Transactional
@@ -317,7 +351,15 @@ public class BusinessService {
 			}
 			//If customer existed and all of the product existed then the system will insert new Order data into database
 			try {
-				
+				for(int i=0;i<saleItems.size();i++) {
+					OrderSaleItemTable osi = new OrderSaleItemTable(saleItems.get(i).getItemId(), saleItems.get(i).getOrder()
+											, saleItems.get(i).getProduct(), saleItems.get(i).getNumber()
+											, saleItems.get(i).getQuanity(), saleItems.get(i).getAmount()
+											, customer.getCustomerId());
+					orderSaleItemTableRepository.save(osi);
+				}
+				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDate(), order.getCreatedPerson(), customer.getCustomerId(), order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency());
+				orderTableRepository.save(orderRecord);
 			} catch (Exception e) {
 				result = 0;
 				System.err. print(e.getMessage());
@@ -326,8 +368,51 @@ public class BusinessService {
 		return result;
 	}
 	
-	public int updateOrder(String id, Order order) {
-		return 0;
+	@Transactional
+	public int updateOrder(String id, Order order, Customer customer, List<OrderSaleItemTable> saleItems) {
+		int result = 1;		//0: some error happened, 1: successfully, 2: customer not found, 3: product not found
+		Optional<CustomerTable> customerChecking = customerTableRepository.findById(customer.getCustomerId());
+		if(customerChecking.isEmpty()) {
+			result = 2;
+		} else {
+			for(int i=0;i<saleItems.size();i++) {
+				Optional<ProductTable> productItemChecking = productTableRepository.findById(saleItems.get(i).getProduct().getId());
+				if(productItemChecking.isEmpty()) {
+					result = 3;
+					return result;
+				}
+			}
+			//If customer existed and all of the product existed then the system will update new Order data into database
+			try {
+				/*
+				 * Author: duyl, created date: Tue, 25 Nov 2025
+				 * Update logic: firstly, delete all sale order items that have value of orderId
+				 * 				secondly, insert all new sale order items from the input
+				 * 				lastly, update all columns of the Order record with the new value
+				 */
+				orderSaleItemTableRepository.deleteAllByOrderId(order.getOrderId());
+				for(int i=0;i<saleItems.size();i++) {
+					OrderSaleItemTable osi = new OrderSaleItemTable(saleItems.get(i).getItemId(), saleItems.get(i).getOrder()
+											, saleItems.get(i).getProduct(), saleItems.get(i).getNumber()
+											, saleItems.get(i).getQuanity(), saleItems.get(i).getAmount()
+											, customer.getCustomerId());
+					orderSaleItemTableRepository.save(osi);
+				}
+				Optional<OrderTable> updateRow = orderTableRepository.findById(id);
+				updateRow.get().setCustomer(customer.getCustomerName());
+				updateRow.get().setCurrency(order.getCurrency());
+				updateRow.get().setCreatedPerson(order.getCreatedPerson());
+				updateRow.get().setCreatedDateTime(order.getCreatedDate());
+				updateRow.get().setBeforeTaxTotal(order.getBeforeTaxTotal());
+				updateRow.get().setAfterTaxTotal(order.getAfterTaxTotal());
+				updateRow.get().setTaxRatio(order.getTaxRatio());
+				orderTableRepository.save(updateRow.get());
+			} catch (Exception e) {
+				result = 0;
+				System.err. print(e.getMessage());
+			}
+		}
+		return result;
 	}
 	
 	public List<OrderTable> queryOrderByDynamicallyConditions(HashMap<String, String> conditions) {
@@ -338,8 +423,20 @@ public class BusinessService {
 		return 0;
 	}
 	
+	@Transactional
 	public int deleteOrderById(String id) {
-		return 0;
+		int result = 1;
+		try {
+			List<OrderSaleItemTable> osiList = orderSaleItemTableRepository.findByOrderId(id);
+			for(int i=0; i<osiList.size();i++) {
+				orderSaleItemTableRepository.deleteById(osiList.get(i).getItemId());
+			}
+			orderTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
 	}
 
 }
