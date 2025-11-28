@@ -27,11 +27,13 @@ public class OrderTable {
 	private long afterTaxTotal;		//tổng tiền sau thuế
 	@Column
 	private String currency;
+	@Column
+	private String state;
 	
 	public OrderTable() {}
 	
 	public OrderTable(String orderId, LocalDateTime createdDateTime, String createdPerson, String customer, long beforeTaxTotal
-			, float taxRatio, long afterTaxTotal, String currency) {
+			, float taxRatio, long afterTaxTotal, String currency, String state) {
 		this.orderId = orderId;
 		this.createdDateTime = createdDateTime;
 		this.createdPerson = createdPerson;
@@ -40,6 +42,7 @@ public class OrderTable {
 		this.taxRatio = taxRatio;
 		this.afterTaxTotal = afterTaxTotal;
 		this.currency = currency;
+		this.state = state;
 	}
 	
 	public String getOrderId() {
@@ -89,6 +92,14 @@ public class OrderTable {
 	}
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }

@@ -1,6 +1,7 @@
 package org.demo.monolithic_shop_app.business_module;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Order;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
+import org.demo.monolithic_shop_app.business_module.workshop.OrderReport;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
@@ -358,7 +360,7 @@ public class BusinessService {
 											, customer.getCustomerId());
 					orderSaleItemTableRepository.save(osi);
 				}
-				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDate(), order.getCreatedPerson(), customer.getCustomerId(), order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency());
+				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDate(), order.getCreatedPerson(), customer.getCustomerId(), order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency(), order.getState());
 				orderTableRepository.save(orderRecord);
 			} catch (Exception e) {
 				result = 0;
@@ -437,6 +439,187 @@ public class BusinessService {
 			System.err. print(e.getMessage());
 		}
 		return result;
+	}
+	
+	public OrderDto reportOrdersInCurrentDay() {
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime fromStartOfTheDay = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth()
+										, currentTime.getDayOfMonth(), 0, 0, 0);
+		List<OrderTable> rows = orderTableRepository.findByCreatedDateTimeBetween(fromStartOfTheDay, currentTime);
+		List<Order> orders = new ArrayList<Order>();
+		for(int i=0; i<rows.size();i++) {
+			Order element = new Order();
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setAfterTaxTotal(rows.get(i).getAfterTaxTotal());
+			element.setBeforeTaxTotal(rows.get(i).getBeforeTaxTotal());
+			element.setCreatedDate(rows.get(i).getCreatedDateTime());
+			element.setCreatedPerson(rows.get(i).getCreatedPerson());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setCustomer(rows.get(i).getCustomer());
+			element.setTaxRatio(rows.get(i).getTaxRatio());
+			
+			List<OrderItem> oiList = new ArrayList<OrderItem>();
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			for(int j=0;j<saleItemList.size();j++) {
+				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
+						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
+						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				oiList.add(item);
+			}
+			element.setItemList(oiList);
+			
+			orders.add(element);
+		}
+		OrderDto result = new OrderDto();
+		result.setOrders(orders);
+		return result;
+	}
+	
+	public OrderDto reportOrdersInCurrentMonth() {
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime fromStartOfTheMonth = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), 1, 0, 0, 0);
+		List<OrderTable> rows = orderTableRepository.findByCreatedDateTimeBetween(fromStartOfTheMonth, currentTime);
+		List<Order> orders = new ArrayList<Order>();
+		for(int i=0; i<rows.size();i++) {
+			Order element = new Order();
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setAfterTaxTotal(rows.get(i).getAfterTaxTotal());
+			element.setBeforeTaxTotal(rows.get(i).getBeforeTaxTotal());
+			element.setCreatedDate(rows.get(i).getCreatedDateTime());
+			element.setCreatedPerson(rows.get(i).getCreatedPerson());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setCustomer(rows.get(i).getCustomer());
+			element.setTaxRatio(rows.get(i).getTaxRatio());
+			
+			List<OrderItem> oiList = new ArrayList<OrderItem>();
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			for(int j=0;j<saleItemList.size();j++) {
+				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
+						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
+						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				oiList.add(item);
+			}
+			element.setItemList(oiList);
+			
+			orders.add(element);
+		}
+		OrderDto result = new OrderDto();
+		result.setOrders(orders);
+		return result;
+	}
+	
+	public OrderDto reportOrdersInCurrentYear() {
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime fromStartOfTheYear = LocalDateTime.of(currentTime.getYear(), 1, 1, 0, 0, 0);
+		List<OrderTable> rows = orderTableRepository.findByCreatedDateTimeBetween(fromStartOfTheYear, currentTime);
+		List<Order> orders = new ArrayList<Order>();
+		for(int i=0; i<rows.size();i++) {
+			Order element = new Order();
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setAfterTaxTotal(rows.get(i).getAfterTaxTotal());
+			element.setBeforeTaxTotal(rows.get(i).getBeforeTaxTotal());
+			element.setCreatedDate(rows.get(i).getCreatedDateTime());
+			element.setCreatedPerson(rows.get(i).getCreatedPerson());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setCustomer(rows.get(i).getCustomer());
+			element.setTaxRatio(rows.get(i).getTaxRatio());
+			
+			List<OrderItem> oiList = new ArrayList<OrderItem>();
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			for(int j=0;j<saleItemList.size();j++) {
+				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
+						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
+						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				oiList.add(item);
+			}
+			element.setItemList(oiList);
+			
+			orders.add(element);
+		}
+		OrderDto result = new OrderDto();
+		result.setOrders(orders);
+		return result;
+	}
+	
+	public OrderDto reportOrdersInAYear(int year) {
+		LocalDateTime fromYear = LocalDateTime.of(year, 1, 1, 0, 0, 0);
+		LocalDateTime toYear = LocalDateTime.of(year, 12, 31, 0, 0, 0);
+		List<OrderTable> rows = orderTableRepository.findByCreatedDateTimeBetween(fromYear, toYear);
+		List<Order> orders = new ArrayList<Order>();
+		for(int i=0; i<rows.size();i++) {
+			Order element = new Order();
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setAfterTaxTotal(rows.get(i).getAfterTaxTotal());
+			element.setBeforeTaxTotal(rows.get(i).getBeforeTaxTotal());
+			element.setCreatedDate(rows.get(i).getCreatedDateTime());
+			element.setCreatedPerson(rows.get(i).getCreatedPerson());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setCustomer(rows.get(i).getCustomer());
+			element.setTaxRatio(rows.get(i).getTaxRatio());
+			
+			List<OrderItem> oiList = new ArrayList<OrderItem>();
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			for(int j=0;j<saleItemList.size();j++) {
+				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
+						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
+						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				oiList.add(item);
+			}
+			element.setItemList(oiList);
+			
+			orders.add(element);
+		}
+		OrderDto result = new OrderDto();
+		result.setOrders(orders);
+		return result;
+	}
+	
+	public OrderReport reportStatisticallyOrderDataInCurrentDay() {
+		OrderDto orders = reportOrdersInCurrentDay();
+		int requestingCount = 0;
+		int processingCount = 0;
+		int waitingForPaymentCount = 0;
+		int suspendedCount = 0;
+		int abortedCount = 0;
+		int successfullyFinishCount = 0;
+		int cancelFinishCount = 0;
+		List<List<Order>> statisticOrderList = new ArrayList<List<Order>>();
+		statisticOrderList.add(new ArrayList<Order>());		//index 0:requesting
+		statisticOrderList.add(new ArrayList<Order>());		//index 1:processing
+		statisticOrderList.add(new ArrayList<Order>());		//index 2:waiting for payment
+		statisticOrderList.add(new ArrayList<Order>());		//index 3:suspended
+		statisticOrderList.add(new ArrayList<Order>());		//index 4:aborted
+		statisticOrderList.add(new ArrayList<Order>());		//index 5:finish successfully
+		statisticOrderList.add(new ArrayList<Order>());		//index 6:cancel finish
+		for(int i=0; i < orders.getOrders().size(); i++) {
+			if(orders.getOrders().get(i).getState().equals("REQUESTING")) {
+				requestingCount++;
+				statisticOrderList.get(0).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("PROCESSING")) {
+				processingCount++;
+				statisticOrderList.get(1).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("WAITING_FOR_PAYMENT")) {
+				waitingForPaymentCount++;
+				statisticOrderList.get(2).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("SUSPENDED")) {
+				suspendedCount++;
+				statisticOrderList.get(3).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("ABORTED")) {
+				abortedCount++;
+				statisticOrderList.get(4).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("FINISH_SUCCESSFULLY")) {
+				successfullyFinishCount++;
+				statisticOrderList.get(5).add(orders.getOrders().get(i));
+			} else if(orders.getOrders().get(i).getState().equals("FINISH_CANCEL")) {
+				cancelFinishCount++;
+				statisticOrderList.get(6).add(orders.getOrders().get(i));
+			}
+		}
+		int total = requestingCount + processingCount + waitingForPaymentCount + suspendedCount + abortedCount + successfullyFinishCount + cancelFinishCount;
+		OrderReport orderReport = new OrderReport(total, requestingCount, processingCount, waitingForPaymentCount, suspendedCount
+										, abortedCount, successfullyFinishCount, cancelFinishCount, statisticOrderList);
+		
+		return orderReport;
 	}
 
 }

@@ -14,11 +14,12 @@ public class Order {
 	private float taxRatio;
 	private long afterTaxTotal;		//tổng tiền sau thuế
 	private String currency;
+	private String state;			//REQUESTING, PROCESSING, WAITING_FOR_PAYMENT, SUSPENDED, ABORTED, FINISH_SUCCESSFULLY, FINISH_CANCEL
 	
 	public Order() {}
 	
 	public Order(String orderId, LocalDateTime createdDate, String createdPerson, String customer, List<OrderItem> itemList, long beforeTaxTotal
-			, float taxRatio, long afterTaxTotal, String currency) {
+			, float taxRatio, long afterTaxTotal, String currency, String state) {
 		this.orderId = orderId;
 		this.createdDate = createdDate;
 		this.createdPerson = createdPerson;
@@ -28,6 +29,7 @@ public class Order {
 		this.taxRatio = taxRatio;
 		this.afterTaxTotal = afterTaxTotal;
 		this.currency = currency;
+		this.state = state;
 	}
 	
 	public String getOrderId() {
@@ -83,6 +85,14 @@ public class Order {
 	}
 	public void setCustomer(String customer) {
 		this.customer = customer;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 }
