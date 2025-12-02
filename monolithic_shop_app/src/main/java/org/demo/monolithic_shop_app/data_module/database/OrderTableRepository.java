@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, String> {
 	
@@ -17,5 +18,8 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, String> 
 	*/
 	
 	List<OrderTable> findByCreatedDateTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+	
+	@Query("SELECT e FROM OrderTable e WHERE e.createdDateTime BETWEEN ?1 AND ?2")
+    List<OrderTable> findByCreatedDateTimeInDateRange(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }

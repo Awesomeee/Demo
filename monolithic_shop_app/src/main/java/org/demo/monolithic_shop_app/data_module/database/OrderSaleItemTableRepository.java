@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderSaleItemTableRepository extends JpaRepository<OrderSaleItemTable, String> {
 
-	public List<OrderSaleItemTable> findByOrderId(String orderId);
-	public void deleteAllByOrderId(String orderId);
+	public List<OrderSaleItemTable> findByOrderOrderId(String orderId);
+	public void deleteAllByOrderOrderId(String OrderId);
 }

@@ -1,6 +1,7 @@
 package org.demo.monolithic_shop_app.business_module;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -321,11 +321,11 @@ public class BusinessService {
 			element.setTaxRatio(rows.get(i).getTaxRatio());
 			
 			List<OrderItem> oiList = new ArrayList<OrderItem>();
-			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderOrderId(rows.get(i).getOrderId());
 			for(int j=0;j<saleItemList.size();j++) {
-				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
-						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
-						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				OrderItem item = new OrderItem(saleItemList.get(j).getNumber()
+						, new Product(saleItemList.get(j).getProduct().getId(), saleItemList.get(j).getProduct().getName(), saleItemList.get(j).getProduct().getDescription(), saleItemList.get(j).getProduct().getPrice(), saleItemList.get(j).getProduct().getCurrency(), saleItemList.get(j).getProduct().getProvider(), null)
+						, saleItemList.get(j).getQuanity(), saleItemList.get(j).getAmount());
 				oiList.add(item);
 			}
 			element.setItemList(oiList);
@@ -337,8 +337,7 @@ public class BusinessService {
 		return result;
 	}
 	
-	@Transactional
-	public int createNewOrderResource(Order order, Customer customer, List<OrderSaleItemTable> saleItems) {
+	public int createNewOrderResource(OrderTable order, Customer customer, List<OrderSaleItemTable> saleItems) {
 		int result = 1;		//0: some error happened, 1: successfully, 2: customer not found, 3: product not found
 		Optional<CustomerTable> customerChecking = customerTableRepository.findById(customer.getCustomerId());
 		if(customerChecking.isEmpty()) {
@@ -353,15 +352,16 @@ public class BusinessService {
 			}
 			//If customer existed and all of the product existed then the system will insert new Order data into database
 			try {
+				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDateTime(), order.getCreatedPerson(), customer.getCustomerId(), order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency(), order.getState());
+				orderTableRepository.save(orderRecord);
 				for(int i=0;i<saleItems.size();i++) {
-					OrderSaleItemTable osi = new OrderSaleItemTable(saleItems.get(i).getItemId(), saleItems.get(i).getOrder()
+					OrderSaleItemTable osi = new OrderSaleItemTable(saleItems.get(i).getItemId(), order
 											, saleItems.get(i).getProduct(), saleItems.get(i).getNumber()
 											, saleItems.get(i).getQuanity(), saleItems.get(i).getAmount()
 											, customer.getCustomerId());
 					orderSaleItemTableRepository.save(osi);
 				}
-				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDate(), order.getCreatedPerson(), customer.getCustomerId(), order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency(), order.getState());
-				orderTableRepository.save(orderRecord);
+				
 			} catch (Exception e) {
 				result = 0;
 				System.err. print(e.getMessage());
@@ -370,7 +370,6 @@ public class BusinessService {
 		return result;
 	}
 	
-	@Transactional
 	public int updateOrder(String id, Order order, Customer customer, List<OrderSaleItemTable> saleItems) {
 		int result = 1;		//0: some error happened, 1: successfully, 2: customer not found, 3: product not found
 		Optional<CustomerTable> customerChecking = customerTableRepository.findById(customer.getCustomerId());
@@ -392,7 +391,7 @@ public class BusinessService {
 				 * 				secondly, insert all new sale order items from the input
 				 * 				lastly, update all columns of the Order record with the new value
 				 */
-				orderSaleItemTableRepository.deleteAllByOrderId(order.getOrderId());
+				orderSaleItemTableRepository.deleteAllByOrderOrderId(order.getOrderId());
 				for(int i=0;i<saleItems.size();i++) {
 					OrderSaleItemTable osi = new OrderSaleItemTable(saleItems.get(i).getItemId(), saleItems.get(i).getOrder()
 											, saleItems.get(i).getProduct(), saleItems.get(i).getNumber()
@@ -425,11 +424,10 @@ public class BusinessService {
 		return 0;
 	}
 	
-	@Transactional
 	public int deleteOrderById(String id) {
 		int result = 1;
 		try {
-			List<OrderSaleItemTable> osiList = orderSaleItemTableRepository.findByOrderId(id);
+			List<OrderSaleItemTable> osiList = orderSaleItemTableRepository.findByOrderOrderId(id);
 			for(int i=0; i<osiList.size();i++) {
 				orderSaleItemTableRepository.deleteById(osiList.get(i).getItemId());
 			}
@@ -446,6 +444,7 @@ public class BusinessService {
 		LocalDateTime fromStartOfTheDay = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth()
 										, currentTime.getDayOfMonth(), 0, 0, 0);
 		List<OrderTable> rows = orderTableRepository.findByCreatedDateTimeBetween(fromStartOfTheDay, currentTime);
+		rows = orderTableRepository.findByCreatedDateTimeInDateRange(fromStartOfTheDay, currentTime);
 		List<Order> orders = new ArrayList<Order>();
 		for(int i=0; i<rows.size();i++) {
 			Order element = new Order();
@@ -459,7 +458,7 @@ public class BusinessService {
 			element.setTaxRatio(rows.get(i).getTaxRatio());
 			
 			List<OrderItem> oiList = new ArrayList<OrderItem>();
-			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderOrderId(rows.get(i).getOrderId());
 			for(int j=0;j<saleItemList.size();j++) {
 				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
 						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
@@ -492,11 +491,12 @@ public class BusinessService {
 			element.setTaxRatio(rows.get(i).getTaxRatio());
 			
 			List<OrderItem> oiList = new ArrayList<OrderItem>();
-			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderOrderId(rows.get(i).getOrderId());
+	
 			for(int j=0;j<saleItemList.size();j++) {
-				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
-						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
-						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				OrderItem item = new OrderItem(saleItemList.get(j).getNumber()
+						, new Product(saleItemList.get(j).getProduct().getId(), saleItemList.get(j).getProduct().getName(), saleItemList.get(j).getProduct().getDescription(), saleItemList.get(j).getProduct().getPrice(), saleItemList.get(j).getProduct().getCurrency(), saleItemList.get(j).getProduct().getProvider(), null)
+						, saleItemList.get(j).getQuanity(), saleItemList.get(j).getAmount());
 				oiList.add(item);
 			}
 			element.setItemList(oiList);
@@ -525,11 +525,12 @@ public class BusinessService {
 			element.setTaxRatio(rows.get(i).getTaxRatio());
 			
 			List<OrderItem> oiList = new ArrayList<OrderItem>();
-			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderOrderId(rows.get(i).getOrderId());
+		
 			for(int j=0;j<saleItemList.size();j++) {
-				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
-						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
-						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				OrderItem item = new OrderItem(saleItemList.get(j).getNumber()
+						, new Product(saleItemList.get(j).getProduct().getId(), saleItemList.get(j).getProduct().getName(), saleItemList.get(j).getProduct().getDescription(), saleItemList.get(j).getProduct().getPrice(), saleItemList.get(j).getProduct().getCurrency(), saleItemList.get(j).getProduct().getProvider(), null)
+						, saleItemList.get(j).getQuanity(), saleItemList.get(j).getAmount());
 				oiList.add(item);
 			}
 			element.setItemList(oiList);
@@ -558,11 +559,12 @@ public class BusinessService {
 			element.setTaxRatio(rows.get(i).getTaxRatio());
 			
 			List<OrderItem> oiList = new ArrayList<OrderItem>();
-			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderId(rows.get(i).getOrderId());
+			List<OrderSaleItemTable> saleItemList = orderSaleItemTableRepository.findByOrderOrderId(rows.get(i).getOrderId());
+			
 			for(int j=0;j<saleItemList.size();j++) {
-				OrderItem item = new OrderItem(saleItemList.get(i).getNumber()
-						, new Product(saleItemList.get(i).getProduct().getId(), saleItemList.get(i).getProduct().getName(), saleItemList.get(i).getProduct().getDescription(), saleItemList.get(i).getProduct().getPrice(), saleItemList.get(i).getProduct().getCurrency(), saleItemList.get(i).getProduct().getProvider(), null)
-						, saleItemList.get(i).getQuanity(), saleItemList.get(i).getAmount());
+				OrderItem item = new OrderItem(saleItemList.get(j).getNumber()
+						, new Product(saleItemList.get(j).getProduct().getId(), saleItemList.get(j).getProduct().getName(), saleItemList.get(j).getProduct().getDescription(), saleItemList.get(j).getProduct().getPrice(), saleItemList.get(j).getProduct().getCurrency(), saleItemList.get(j).getProduct().getProvider(), null)
+						, saleItemList.get(j).getQuanity(), saleItemList.get(j).getAmount());
 				oiList.add(item);
 			}
 			element.setItemList(oiList);
