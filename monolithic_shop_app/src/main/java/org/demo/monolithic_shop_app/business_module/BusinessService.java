@@ -1,7 +1,6 @@
 package org.demo.monolithic_shop_app.business_module;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,14 +15,20 @@ import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderReport;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
+import org.demo.monolithic_shop_app.business_module.workshop.Provider;
+import org.demo.monolithic_shop_app.business_module.workshop.ProviderDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.MailBoxTable;
+import org.demo.monolithic_shop_app.data_module.database.MailBoxTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.OrderTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.demo.monolithic_shop_app.data_module.database.ProductTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.ProviderTable;
+import org.demo.monolithic_shop_app.data_module.database.ProviderTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -44,6 +49,10 @@ public class BusinessService {
 	private OrderTableRepository orderTableRepository;
 	@Autowired
 	private OrderSaleItemTableRepository orderSaleItemTableRepository;
+	@Autowired
+	private MailBoxTableRepository mailBoxTableRepository;
+	@Autowired
+	private ProviderTableRepository providerTableRepository;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -622,6 +631,144 @@ public class BusinessService {
 										, abortedCount, successfullyFinishCount, cancelFinishCount, statisticOrderList);
 		
 		return orderReport;
+	}
+	
+	//Mail Section
+	public MailDto queryAllMails(int pageNumber, int pageSize, String sortType, String direction) {
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<MailBoxTable> rows = mailBoxTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<Mail> mails = new ArrayList<Mail>();
+		for(int i=0; i<rows.size();i++) {
+			Mail element = new Mail();
+			element.setMailId(rows.get(i).getMailId());
+			element.setCreatedDateTime(rows.get(i).getCreatedDateTime());
+			element.setFromUser(rows.get(i).getFrom());
+			element.setMessage(rows.get(i).getMessage());
+			element.setState(rows.get(i).getState());
+			element.setSubject(rows.get(i).getSubject());
+			element.setToUser(rows.get(i).getTo());
+			element.setUser(rows.get(i).getUser());
+			
+			mails.add(element);
+		}
+		MailDto result = new MailDto();
+		result.setMails(mails);
+		return result;
+	}
+	
+	public int createNewMailResource(Mail mail) {
+		int result = 1;
+		try {
+			MailBoxTable row = new MailBoxTable(mail.getMailId(), mail.getSubject(), mail.getCreatedDateTime()
+					, mail.getFromUser(), mail.getToUser(), mail.getMessage(), mail.getState(), mail.getUser());
+			mailBoxTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int updateMail(String id, Mail mail) {
+		int result = 1;
+		try {
+			Optional<MailBoxTable> updateRow = mailBoxTableRepository.findById(id);
+			updateRow.get().setCreatedDateTime(mail.getCreatedDateTime());
+			updateRow.get().setFrom(mail.getFromUser());
+			updateRow.get().setMessage(mail.getMessage());
+			updateRow.get().setState(mail.getState());
+			updateRow.get().setSubject(mail.getSubject());
+			updateRow.get().setTo(mail.getToUser());
+			updateRow.get().setUser(mail.getUser());
+			mailBoxTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteMail(String id) {
+		int result = 1;
+		try {
+			mailBoxTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+	
+	//Provider Section
+	public ProviderDto queryAllProviders(int pageNumber, int pageSize, String sortType, String direction) {
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<ProviderTable> rows = providerTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<Provider> providers = new ArrayList<Provider>();
+		for(int i=0; i<rows.size();i++) {
+			Provider element = new Provider();
+			element.setProviderId(rows.get(i).getProviderId());
+			element.setAddress(rows.get(i).getAddress());
+			element.setEmail(rows.get(i).getEmail());
+			element.setPhoneNumber(rows.get(i).getPhoneNumber());
+			element.setProviderName(rows.get(i).getProviderName());
+			element.setRepresentativeName(rows.get(i).getRepresentativeName());
+			
+			providers.add(element);
+		}
+		ProviderDto result = new ProviderDto();
+		result.setProviders(providers);
+		return result;
+	}
+	
+	public int createNewProviderResource(Provider provider) {
+		int result = 1;
+		try {
+			ProviderTable row = new ProviderTable(provider.getProviderId(), provider.getProviderName(), provider.getPhoneNumber()
+					, provider.getAddress(), provider.getEmail(), provider.getRepresentativeName());
+			providerTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int updateProvider(String id, Provider provider) {
+		int result = 1;
+		try {
+			Optional<ProviderTable> updateRow = providerTableRepository.findById(id);
+			updateRow.get().setAddress(provider.getAddress());
+			updateRow.get().setEmail(provider.getEmail());
+			updateRow.get().setPhoneNumber(provider.getPhoneNumber());
+			updateRow.get().setProviderName(provider.getProviderName());
+			updateRow.get().setRepresentativeName(provider.getRepresentativeName());
+			providerTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteProvider(String id) {
+		int result = 1;
+		try {
+			providerTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
 	}
 
 }

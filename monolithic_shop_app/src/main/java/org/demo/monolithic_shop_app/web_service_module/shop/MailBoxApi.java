@@ -1,8 +1,11 @@
-package org.demo.monolithic_shop_app.web_service_module.workshop;
+package org.demo.monolithic_shop_app.web_service_module.shop;
 
 import java.util.HashMap;
 
+import org.demo.monolithic_shop_app.business_module.BusinessService;
+import org.demo.monolithic_shop_app.business_module.Mail;
 import org.demo.monolithic_shop_app.business_module.MailDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,15 +19,18 @@ import jakarta.validation.Valid;
 
 public class MailBoxApi {
 	
+	@Autowired
+	private BusinessService businessService;
+	
 	@GetMapping("/api/mailbox")
-	public String queryAllMailBox(@RequestParam(name = "page", required = false) int page, @RequestParam(name = "size", required = false) int size
+	public MailDto queryAllMailBox(@RequestParam(name = "page", required = false) int page, @RequestParam(name = "size", required = false) int size
 									, @RequestParam(name = "sort", required = false) String sort, @RequestParam(name = "direction", required = false) String direction) {
-		return "empty";
+		return businessService.queryAllMails(page, size, sort, direction);
 	}
 	
 	@PostMapping("/api/mailbox")
-	public String createMail(@Valid @RequestBody MailDto mail) {
-		return "empty";
+	public String createMail(@Valid @RequestBody Mail mail) {
+		return businessService.createNewMailResource(mail) + "";
 	}
 	
 	@GetMapping("/api/mailbox/conditions")
@@ -38,13 +44,13 @@ public class MailBoxApi {
 	}
 	
 	@PutMapping("/api/mailbox")
-	public String updateMail(@Valid @RequestBody MailDto mail) {
-		return "empty";
+	public String updateMail(@Valid @RequestBody Mail mail) {
+		return businessService.updateMail(mail.getMailId(), mail) + "";
 	}
 	
 	@DeleteMapping("/api/mailbox/{mail-id}")
 	public String deleteMail(@PathVariable(name = "mail-id") String mailId) {
-		return "empty";
+		return businessService.deleteMail(mailId) + "";
 	}
 
 }

@@ -1,6 +1,9 @@
 package org.demo.monolithic_shop_app.web_service_module.shop;
 
+import org.demo.monolithic_shop_app.security_module.User;
 import org.demo.monolithic_shop_app.security_module.UserDto;
+import org.demo.monolithic_shop_app.security_module.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,19 +24,37 @@ import jakarta.validation.Valid;
 @RestController
 public class UserApi {
 	
+	@Autowired
+	private UserService userService;
+	
 	@GetMapping("/csrf-token")
     public CsrfToken csrf(HttpServletRequest request) {
         return (CsrfToken) request.getAttribute(CsrfToken.class.getName());
     }
 	
 	@GetMapping("/api/users")
-	public String queryUserList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
-		return "empty";
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.OK)
+	public UserDto queryUserList(@RequestParam(name = "page", required = false) int page,@RequestParam(name = "size", required = false) int size,@RequestParam(name = "sort", required = false) String sort,@RequestParam(name = "direction", required = false) String direction) {
+		return userService.queryAllUsers(page, size, sort, direction);
 	}
 	
 	@PostMapping("/api/users")
-	public String addUser(@Valid @RequestBody(required = true) UserDto user) {
-		return "empty";
+	public String addUser(@Valid @RequestBody(required = true) User user) {
+		int result = userService.createUser(user);
+		return result + "";
+	}
+	
+	@PostMapping("/api/users/register")
+	public String registerUser(@Valid @RequestBody(required = true) User user) {
+		int result = userService.registerNewUser(user);
+		return result + "";
+	}
+	
+	@PostMapping("/api/users/activate")
+	public String activateUser(@Valid @RequestBody(required = true) User user) {
+		int result = userService.activeUser(user);
+		return result + "";
 	}
 	
 	@GetMapping("/api/users/{user-category}")
@@ -47,13 +69,13 @@ public class UserApi {
 	}
 	
 	@PutMapping("/api/users/{user-id}")
-	public String updateUserResource(@PathVariable(name="user-id", required = true) String userId, @RequestBody UserDto user) {
-		return "empty";
+	public String updateUserResource(@PathVariable(name="user-id", required = true) String userId, @RequestBody User user) {
+		return userService.editUser(userId, user) + "";
 	}
 	
 	@DeleteMapping("/api/users/{user-id}")
 	public String deleteUserResource(@PathVariable(name="user-id", required = true) String userId) {
-		return "empty";
+		return userService.deleteUser(userId) + "";
 	}
 
 }

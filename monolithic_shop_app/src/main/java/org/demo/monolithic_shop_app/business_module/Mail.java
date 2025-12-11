@@ -2,6 +2,7 @@ package org.demo.monolithic_shop_app.business_module;
 
 import java.time.LocalDateTime;
 
+import org.demo.monolithic_shop_app.data_module.database.UserTable;
 import org.demo.monolithic_shop_app.security_module.User;
 
 public class Mail {
@@ -13,12 +14,12 @@ public class Mail {
 	private String toUser;
 	private String message;
 	private String state;		//1: read; 2: unread
-	private User user;
+	private UserTable user;
 	
 	public Mail() {}
 	
 	public Mail(String mailId, String subject, LocalDateTime createdDateTime, String fromUser, String toUser, String message, String state
-			, User user) {
+			, UserTable user) {
 		this.mailId = mailId;
 		this.subject = subject;
 		this.createdDateTime = createdDateTime;
@@ -71,10 +72,10 @@ public class Mail {
 	public void setState(String state) {
 		this.state = state;
 	}
-	public User getUser() {
+	public UserTable getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(UserTable user) {
 		this.user = user;
 	}
 
