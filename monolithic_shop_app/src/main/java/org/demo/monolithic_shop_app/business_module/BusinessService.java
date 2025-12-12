@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import org.demo.monolithic_shop_app.business_module.shop.Customer;
 import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
+import org.demo.monolithic_shop_app.business_module.workshop.Employee;
+import org.demo.monolithic_shop_app.business_module.workshop.EmployeeDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Order;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
@@ -19,8 +21,12 @@ import org.demo.monolithic_shop_app.business_module.workshop.Provider;
 import org.demo.monolithic_shop_app.business_module.workshop.ProviderDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.EmployeeTable;
+import org.demo.monolithic_shop_app.data_module.database.EmployeeTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.MailBoxTable;
 import org.demo.monolithic_shop_app.data_module.database.MailBoxTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.OrderPurchaseItemTable;
+import org.demo.monolithic_shop_app.data_module.database.OrderPurchaseItemTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.OrderTable;
@@ -50,9 +56,13 @@ public class BusinessService {
 	@Autowired
 	private OrderSaleItemTableRepository orderSaleItemTableRepository;
 	@Autowired
+	private OrderPurchaseItemTableRepository orderPurchaseItemTableRepository;
+	@Autowired
 	private MailBoxTableRepository mailBoxTableRepository;
 	@Autowired
 	private ProviderTableRepository providerTableRepository;
+	@Autowired
+	private EmployeeTableRepository employeeTableRepository;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -346,7 +356,7 @@ public class BusinessService {
 		return result;
 	}
 	
-	public int createNewOrderResource(OrderTable order, Customer customer, List<OrderSaleItemTable> saleItems) {
+	public int createNewSaleOrderResource(OrderTable order, Customer customer, List<OrderSaleItemTable> saleItems) {
 		int result = 1;		//0: some error happened, 1: successfully, 2: customer not found, 3: product not found
 		Optional<CustomerTable> customerChecking = customerTableRepository.findById(customer.getCustomerId());
 		if(customerChecking.isEmpty()) {
@@ -369,6 +379,37 @@ public class BusinessService {
 											, saleItems.get(i).getQuanity(), saleItems.get(i).getAmount()
 											, customer.getCustomerId());
 					orderSaleItemTableRepository.save(osi);
+				}
+				
+			} catch (Exception e) {
+				result = 0;
+				System.err. print(e.getMessage());
+			}
+		}
+		return result;
+	}
+	
+	public int createNewPurchaseOrderResource(OrderTable order, Provider provider, List<OrderPurchaseItemTable> purchaseItems) {
+		int result = 1;		//0: some error happened, 1: successfully, 2: provider not found, 3: product not found
+		Optional<ProviderTable> providerChecking = providerTableRepository.findById(provider.getProviderId());
+		if(providerChecking.isEmpty()) {
+			result = 2;
+		} else {
+			for(int i=0;i<purchaseItems.size();i++) {
+				Optional<ProductTable> productItemChecking = productTableRepository.findById(purchaseItems.get(i).getProduct().getId());
+				if(productItemChecking.isEmpty()) {
+					result = 3;
+					return result;
+				}
+			}
+			//If provider existed and all of the product existed then the system will insert new Order data into database
+			try {
+				OrderTable orderRecord = new OrderTable(order.getOrderId(), order.getCreatedDateTime(), order.getCreatedPerson(), null, order.getBeforeTaxTotal(), order.getTaxRatio(), order.getAfterTaxTotal(), order.getCurrency(), order.getState());
+				orderTableRepository.save(orderRecord);
+				for(int i=0;i<purchaseItems.size();i++) {
+					OrderPurchaseItemTable opi = new OrderPurchaseItemTable(purchaseItems.get(i).getItemId(), orderRecord, null, purchaseItems.get(i).getNumber()
+							, purchaseItems.get(i).getQuanity() , purchaseItems.get(i).getAmount(), providerChecking.get());
+					orderPurchaseItemTableRepository.save(opi);
 				}
 				
 			} catch (Exception e) {
@@ -764,6 +805,77 @@ public class BusinessService {
 		int result = 1;
 		try {
 			providerTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+	
+	//employee section
+	public EmployeeDto queryAllEmployees(int pageNumber, int pageSize, String sortType, String direction) {
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<EmployeeTable> rows = employeeTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<Employee> employees = new ArrayList<Employee>();
+		for(int i=0; i<rows.size();i++) {
+			Employee element = new Employee();
+			element.setEmployeeId(rows.get(i).getEmployeeId());
+			element.setAddress(rows.get(i).getAddress());
+			element.setEmail(rows.get(i).getEmail());
+			element.setEmployeeName(rows.get(i).getEmployeeName());
+			element.setIdentityNumber(rows.get(i).getIdentityNumber());
+			element.setOnboardDateTime(rows.get(i).getOnboardDateTime());
+			element.setPhoneNumber(rows.get(i).getPhoneNumber());
+			element.setUser(rows.get(i).getUser());
+			
+			employees.add(element);
+		}
+		EmployeeDto result = new EmployeeDto();
+		result.setEmployees(employees);
+		return result;
+	}
+	
+	public int createNewEmployeeResource(Employee employee) {
+		int result = 1;
+		try {
+			EmployeeTable row = new EmployeeTable(employee.getEmployeeId(), employee.getEmployeeName(), employee.getPhoneNumber(), employee.getIdentityNumber()
+					, employee.getAddress(), employee.getEmail(), employee.getOnboardDateTime(), employee.getUser());;
+			employeeTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int updateEmployee(String id, Employee employee) {
+		int result = 1;
+		try {
+			Optional<EmployeeTable> updateRow = employeeTableRepository.findById(id);
+			updateRow.get().setAddress(employee.getAddress());
+			updateRow.get().setEmail(employee.getEmail());
+			updateRow.get().setEmployeeName(employee.getEmployeeName());
+			updateRow.get().setIdentityNumber(employee.getIdentityNumber());
+			updateRow.get().setOnboardDateTime(employee.getOnboardDateTime());
+			updateRow.get().setPhoneNumber(employee.getPhoneNumber());
+			updateRow.get().setUser(employee.getUser());
+			employeeTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteEmployee(String id) {
+		int result = 1;
+		try {
+			employeeTableRepository.deleteById(id);
 		} catch(Exception e) {
 			result = 0;
 			System.err. print(e.getMessage());

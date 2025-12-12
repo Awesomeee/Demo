@@ -2,6 +2,7 @@ package org.demo.monolithic_shop_app.business_module.workshop;
 
 import java.time.LocalDateTime;
 
+import org.demo.monolithic_shop_app.data_module.database.UserTable;
 import org.demo.monolithic_shop_app.security_module.User;
 
 import jakarta.validation.constraints.Size;
@@ -18,12 +19,12 @@ public class Employee {
 	private String address;
 	private String email;
 	private LocalDateTime onboardDateTime;
-	private User user;
+	private UserTable user;
 	
 	public Employee() {}
 	
 	public Employee(String employeeId, String employeeName, String phoneNumber, String identityNumber, String address, String email
-			, LocalDateTime onboardDateTime, User user) {
+			, LocalDateTime onboardDateTime, UserTable user) {
 		this.employeeId = employeeId;
 		this.employeeName = employeeName;
 		this.phoneNumber = phoneNumber;
@@ -76,10 +77,10 @@ public class Employee {
 	public void setOnboardDateTime(LocalDateTime onboardDateTime) {
 		this.onboardDateTime = onboardDateTime;
 	}
-	public User getUser() {
+	public UserTable getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(UserTable user) {
 		this.user = user;
 	}
 

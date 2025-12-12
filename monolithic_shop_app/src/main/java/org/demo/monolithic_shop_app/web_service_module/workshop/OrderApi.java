@@ -10,6 +10,7 @@ import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderTable;
 import org.demo.monolithic_shop_app.web_service_module.InputData.OrderInput;
+import org.demo.monolithic_shop_app.web_service_module.InputData.PurchaseOrderInput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,9 +39,27 @@ public class OrderApi {
 		return businessService.queryAllOrders(page, size, sort, direction);
 	}
 	
+	/*
+	 * author: duyl
+	 * created date: 2025, Fri 12 Dec
+	 * default: sale orders, in the future you can add a parameter which will determine whether order type
+	 * is sale order or purchase order.
+	 */
 	@PostMapping("/api/orders")
 	public String createOrder(@RequestBody(required = true) OrderInput orderInput) {
-		int result = businessService.createNewOrderResource(orderInput.getOrder(), orderInput.getCustomer(), orderInput.getSaleItems());
+		int result = businessService.createNewSaleOrderResource(orderInput.getOrder(), orderInput.getCustomer(), orderInput.getSaleItems());
+		return result + "";
+	}
+	
+	@PostMapping("/api/orders/sale")
+	public String createSaleOrder(@RequestBody(required = true) OrderInput orderInput) {
+		int result = businessService.createNewSaleOrderResource(orderInput.getOrder(), orderInput.getCustomer(), orderInput.getSaleItems());
+		return result + "";
+	}
+	
+	@PostMapping("/api/orders/purchase")
+	public String createPurchaseOrder(@RequestBody(required = true) PurchaseOrderInput orderInput) {
+		int result = businessService.createNewPurchaseOrderResource(orderInput.getOrder(), orderInput.getProvider(), orderInput.getPurchaseItems());
 		return result + "";
 	}
 	
