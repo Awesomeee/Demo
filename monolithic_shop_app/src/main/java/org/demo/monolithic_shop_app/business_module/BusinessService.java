@@ -119,6 +119,23 @@ public class BusinessService {
 		return result;
 	}
 	
+	public int createNewProductResource(List<Product> productList) {
+		int result = 1;
+		try {
+			List<ProductTable> rowList = new ArrayList<ProductTable>();
+			for(int i=0; i<productList.size();i++) {
+				ProductTable row = new ProductTable(productList.get(i).getId(), productList.get(i).getName(), productList.get(i).getDescription(), productList.get(i).getPrice(), productList.get(i).getCurrency(), productList.get(i).getProvider());
+				rowList.add(row);
+			}
+			
+			productTableRepository.saveAll(rowList);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
 	public int updateProduct(String id, Product product) {
 		int result = 1;
 		try {
@@ -192,6 +209,17 @@ public class BusinessService {
 		int result = 1;
 		try {
 			productTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteProductById(List<String> idList) {
+		int result = 1;
+		try {
+			productTableRepository.deleteAllById(idList);
 		} catch(Exception e) {
 			result = 0;
 			System.err. print(e.getMessage());

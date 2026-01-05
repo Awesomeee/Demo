@@ -131,17 +131,22 @@ public class ProductApi {
 		return result + "";
 	}
 	
-	//note to remember: need to implement 4 more api: submit in batch, update in batch, delete in batch, analyze the resource(how many resource that exist? how many categories and sub categories of it?)
-	public String addAListOfProductResources() {
-		return "ok";
+	//note to remember: need to implement 2 more api: update in batch, analyze the resource(how many resource that exist? how many categories and sub categories of it?)
+	@PostMapping(path = "/api/list/products")
+	public String addAListOfProductResources(@RequestBody(required = true) List<Product> submitData) {
+		int result = businessService.createNewProductResource(submitData);
+		return result + "";
 	}
 	
 	public String updateAListOfProductResources() {
 		return "ok";
 	}
 	
-	public String deleteAListOfProductResources() {
-		return "ok";
+	@DeleteMapping(path = "/api/list/{product-ids}/products")
+	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	public String deleteAListOfProductResources(@PathVariable(name = "product-ids", required = true) List<String> productIds) {
+		int result = businessService.deleteProductById(productIds);
+		return result + "";
 	}
 	
 	public String analizeProductResources() {
