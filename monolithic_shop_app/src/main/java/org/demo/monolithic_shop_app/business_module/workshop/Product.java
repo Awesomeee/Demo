@@ -12,6 +12,7 @@ public class Product {
 	private String currency;
 	private String provider;
 	private ProductDetail productDetail;
+	private String category;
 	
 	public Product() {}
 	
@@ -30,6 +31,25 @@ public class Product {
 			this.provider = provider;
 		if(productDetail != null)
 			this.productDetail = productDetail;
+	}
+	
+	public Product(String id, String name, String description, long price, String currency, String provider
+			, ProductDetail productDetail, String category) {
+		if(id != null)
+			this.id = id;
+		if(name != null)
+			this.name = name;
+		if(description != null)
+			this.description = description;
+		this.price = price;
+		if(currency != null)
+			this.currency = currency;
+		if(provider != null)
+			this.provider = provider;
+		if(productDetail != null)
+			this.productDetail = productDetail;
+		if(category != null)
+			this.category = category;
 	}
 	
 	public String getId() {
@@ -75,6 +95,14 @@ public class Product {
 
 	public void setProductDetail(ProductDetail productDetail) {
 		this.productDetail = productDetail;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }

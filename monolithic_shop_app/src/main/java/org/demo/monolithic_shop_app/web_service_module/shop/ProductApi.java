@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.demo.monolithic_shop_app.business_module.BusinessService;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
+import org.demo.monolithic_shop_app.business_module.workshop.ProductReport;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -138,8 +139,11 @@ public class ProductApi {
 		return result + "";
 	}
 	
-	public String updateAListOfProductResources() {
-		return "ok";
+	@PutMapping(path = "/api/list/products/{product-id}")
+	@ResponseStatus(code = HttpStatus.OK)
+	public String updateAListOfProductResources(@PathVariable(name = "product-id", required = true) List<String> productIds, @RequestBody(required = true) List<Product> updateDatas) {
+		int result = businessService.updateProduct(productIds, updateDatas);
+		return result + "";
 	}
 	
 	@DeleteMapping(path = "/api/list/{product-ids}/products")
@@ -149,8 +153,9 @@ public class ProductApi {
 		return result + "";
 	}
 	
-	public String analizeProductResources() {
-		return "ok";
+	@GetMapping("/api/products/report")
+	public ProductReport analizeProductResources() {
+		return businessService.reportProductStatistically();
 	}
 	
 	@PostMapping(path = "/test")

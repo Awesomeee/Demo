@@ -17,6 +17,7 @@ import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderReport;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
+import org.demo.monolithic_shop_app.business_module.workshop.ProductReport;
 import org.demo.monolithic_shop_app.business_module.workshop.Provider;
 import org.demo.monolithic_shop_app.business_module.workshop.ProviderDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
@@ -153,6 +154,27 @@ public class BusinessService {
 		return result;
 	}
 	
+	public int updateProduct(List<String> idList, List<Product> productList) {
+		int result = 1;
+		try {
+			for(int i=0;i<idList.size();i++) {
+				Optional<ProductTable> updateRow = productTableRepository.findById(idList.get(i));
+				if(!updateRow.isEmpty()) {
+					updateRow.get().setName(productList.get(i).getName());
+					updateRow.get().setDescription(productList.get(i).getDescription());
+					updateRow.get().setPrice(productList.get(i).getPrice());
+					updateRow.get().setCurrency(productList.get(i).getCurrency());
+					updateRow.get().setProvider(productList.get(i).getProvider());
+					productTableRepository.save(updateRow.get());
+				}
+			}
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
 	public List<ProductTable> queryProductByDynamicallyConditions(HashMap<String, String> conditions) {
 		String jpql = "SELECT p FROM ProductTable p Where ";
 		boolean firstCondition = true;
@@ -225,6 +247,18 @@ public class BusinessService {
 			System.err. print(e.getMessage());
 		}
 		return result;
+	}
+	
+	public ProductReport reportProductStatistically() {
+		int productCount = (int) productTableRepository.count();
+		List<String> categories = productTableRepository.findDistinctCategoryByQuery();
+		List<Integer> categoryCountList = new ArrayList<Integer>();
+		for(int i=0;i<categories.size();i++) {
+			int categoryCount = productTableRepository.countByCategory(categories.get(i));
+			categoryCountList.add(categoryCount);
+		}
+		ProductReport report = new ProductReport(productCount, categories, categoryCountList);
+		return report;
 	}
 	
 	//Customer Section

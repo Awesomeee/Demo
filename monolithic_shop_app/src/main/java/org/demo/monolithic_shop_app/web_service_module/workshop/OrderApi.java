@@ -1,14 +1,7 @@
 package org.demo.monolithic_shop_app.web_service_module.workshop;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.demo.monolithic_shop_app.business_module.BusinessService;
-import org.demo.monolithic_shop_app.business_module.shop.Customer;
-import org.demo.monolithic_shop_app.business_module.workshop.Order;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
-import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTable;
-import org.demo.monolithic_shop_app.data_module.database.OrderTable;
 import org.demo.monolithic_shop_app.web_service_module.InputData.OrderInput;
 import org.demo.monolithic_shop_app.web_service_module.InputData.PurchaseOrderInput;
 import org.springframework.beans.factory.annotation.Autowired;

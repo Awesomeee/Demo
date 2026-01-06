@@ -27,6 +27,9 @@ public class ProductTable {
 	@Column
 	private String provider;
 	
+	@Column
+	private String category;
+	
 	
 	public ProductTable() {}
 	
@@ -37,6 +40,16 @@ public class ProductTable {
 		this.price = price;
 		this.currency = currency;
 		this.provider = provider;
+	}
+	
+	public ProductTable(String id, String name, String description, long price, String currency, String provider, String category) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.currency = currency;
+		this.provider = provider;
+		this.category = category;
 	}
 
 	public String getId() {
@@ -85,6 +98,14 @@ public class ProductTable {
 
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }
