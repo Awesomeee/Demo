@@ -39,7 +39,7 @@ public class SecurityConfiguration {
 	            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
 	            // Permit all requests to H2 console path
 	            .authorizeHttpRequests(auth -> auth
-	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**")).permitAll()
+	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**"), antMatcher("/stream-events")).permitAll()
 	                .anyRequest().authenticated() // Protect other endpoints
 	            )
 	            .formLogin(Customizer.withDefaults());

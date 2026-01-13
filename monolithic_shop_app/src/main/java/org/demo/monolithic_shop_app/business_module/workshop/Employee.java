@@ -3,7 +3,6 @@ package org.demo.monolithic_shop_app.business_module.workshop;
 import java.time.LocalDateTime;
 
 import org.demo.monolithic_shop_app.data_module.database.UserTable;
-import org.demo.monolithic_shop_app.security_module.User;
 
 import jakarta.validation.constraints.Size;
 

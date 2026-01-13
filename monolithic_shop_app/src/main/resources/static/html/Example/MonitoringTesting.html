@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home page</title>
+    </head>
+    <script>
+	    /*const eventSource = new EventSource('http://localhost:8080/stream-events');
+	
+	    eventSource.onmessage = function(event) {
+	      // Handle the received data
+	      console.log("Received event:", event.data);
+	    };
+	
+	    eventSource.onerror = function(error) {
+	        console.error("EventSource error:", error);
+	        console.error("ReadyState:", eventSource.readyState);
+	        
+	        if (eventSource.readyState === EventSource.CLOSED) {
+	            console.log("Connection was closed");
+	        } else if (eventSource.readyState === EventSource.CONNECTING) {
+	            console.log("Reconnecting...");
+	        }
+	    };
+
+	    // Check if EventSource is supported
+	    if (typeof EventSource !== 'undefined') {
+	        console.log("EventSource is supported");
+	    } else {
+	        console.error("EventSource is not supported in this browser");
+	    }*/
+    </script>
+    <body>
+        <p>Hello, guest</p>
+        <div id="output"></div>
+        <script>
+        /*console.log("Starting SSE test...");
+        const eventSource = new EventSource('http://localhost:8080/stream-events');
+        
+        eventSource.onopen = () => {
+            console.log("SSE Connection opened at:", new Date().toLocaleTimeString());
+            document.getElementById('output').innerHTML += '<p>Connection opened</p>';
+        };
+        
+        eventSource.onmessage = (event) => {
+            console.log("Received:", event.data);
+            document.getElementById('output').innerHTML += 
+                `<p>${new Date().toLocaleTimeString()}: ${event.data}</p>`;
+        };
+        
+        eventSource.onerror = (error) => {
+            console.error("SSE Error:", error);
+            document.getElementById('output').innerHTML += 
+                '<p style="color: red">Connection error</p>';
+        };*/
+    </script>
+    
+    <script>
+		async function connectWithFetch() {
+		    const url = 'http://localhost:8080/stream-events';
+		    console.log('Connecting with fetch API to:', url);
+		    
+		    try {
+		        const response = await fetch(url);
+		        const reader = response.body.getReader();
+		        const decoder = new TextDecoder();
+		        
+		        console.log('Fetch connection established');
+		        
+		        while (true) {
+		            const {value, done} = await reader.read();
+		            if (done) break;
+		            
+		            const text = decoder.decode(value);
+		            console.log('Raw chunk received:', text);
+		            
+		            // Parse SSE manually
+		            const lines = text.split('\n');
+		            for (const line of lines) {
+		                if (line.startsWith('data: ')) {
+		                    const data = line.substring(6);
+		                    console.log('Parsed data:', data);
+		                    document.getElementById('output').innerHTML += 
+		                        `<p>${new Date().toLocaleTimeString()}: ${data}</p>`;
+		                }
+		            }
+		        }
+		    } catch (error) {
+		        console.error('Fetch error:', error);
+		    }
+		}
+		
+		// Call it
+		connectWithFetch();
+	</script>
+    </body>
+</html>

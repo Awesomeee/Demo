@@ -9,12 +9,16 @@ import java.util.Optional;
 
 import org.demo.monolithic_shop_app.business_module.shop.Customer;
 import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
+import org.demo.monolithic_shop_app.business_module.workshop.DeliveryForm;
+import org.demo.monolithic_shop_app.business_module.workshop.DeliveryFormDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Employee;
 import org.demo.monolithic_shop_app.business_module.workshop.EmployeeDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Order;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderDto;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderItem;
 import org.demo.monolithic_shop_app.business_module.workshop.OrderReport;
+import org.demo.monolithic_shop_app.business_module.workshop.PaymentForm;
+import org.demo.monolithic_shop_app.business_module.workshop.PaymentFormDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductReport;
@@ -22,6 +26,8 @@ import org.demo.monolithic_shop_app.business_module.workshop.Provider;
 import org.demo.monolithic_shop_app.business_module.workshop.ProviderDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.DeliveryFormTable;
+import org.demo.monolithic_shop_app.data_module.database.DeliveryFormTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.EmployeeTable;
 import org.demo.monolithic_shop_app.data_module.database.EmployeeTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.MailBoxTable;
@@ -32,6 +38,8 @@ import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderSaleItemTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.OrderTable;
 import org.demo.monolithic_shop_app.data_module.database.OrderTableRepository;
+import org.demo.monolithic_shop_app.data_module.database.PaymentFormTable;
+import org.demo.monolithic_shop_app.data_module.database.PaymentFormTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.demo.monolithic_shop_app.data_module.database.ProductTableRepository;
 import org.demo.monolithic_shop_app.data_module.database.ProviderTable;
@@ -64,6 +72,10 @@ public class BusinessService {
 	private ProviderTableRepository providerTableRepository;
 	@Autowired
 	private EmployeeTableRepository employeeTableRepository;
+	@Autowired
+	private DeliveryFormTableRepository deliveryFormTableRepository;
+	@Autowired
+	private PaymentFormTableRepository paymentFormTableRepository;
 	
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -938,6 +950,162 @@ public class BusinessService {
 		int result = 1;
 		try {
 			employeeTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+	
+	//DeliveryForm section
+	public DeliveryFormDto queryAllDeliveryForms(int pageNumber, int pageSize, String sortType, String direction) {
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<DeliveryFormTable> rows = deliveryFormTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<DeliveryForm> deliveryForms = new ArrayList<DeliveryForm>();
+		for(int i=0; i<rows.size();i++) {
+			DeliveryForm element = new DeliveryForm();
+			element.setCreatedDate(rows.get(i).getCreatedDate());
+			element.setCreatedEmployeeId(rows.get(i).getCreatedEmployeeId());
+			element.setCustomerId(rows.get(i).getCustomerId());
+			element.setDeliveryId(rows.get(i).getDeliveryId());
+			element.setFinishDate(rows.get(i).getFinishDate());
+			element.setNote(rows.get(i).getNote());
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setOverdueDate(rows.get(i).getOverdueDate());
+			element.setShipperId(rows.get(i).getShipperId());
+			element.setState(rows.get(i).getState());
+			
+			deliveryForms.add(element);
+		}
+		DeliveryFormDto result = new DeliveryFormDto();
+		result.setDeliveryFormList(deliveryForms);
+		return result;
+	}
+	
+	public int createNewDeliveryFormResource(DeliveryForm deliveryForm) {
+		int result = 1;
+		try {
+			DeliveryFormTable row = new DeliveryFormTable(deliveryForm.getDeliveryId(), deliveryForm.getCreatedEmployeeId()
+					, deliveryForm.getCreatedDate(), deliveryForm.getFinishDate(), deliveryForm.getOrderId()
+					, deliveryForm.getCustomerId(), deliveryForm.getShipperId(), deliveryForm.getNote()
+					, deliveryForm.getOverdueDate(), deliveryForm.getState());
+			deliveryFormTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int updateDeliveryForm(String id, DeliveryForm deliveryForm) {
+		int result = 1;
+		try {
+			Optional<DeliveryFormTable> updateRow = deliveryFormTableRepository.findById(id);
+			updateRow.get().setCreatedDate(deliveryForm.getCreatedDate());
+			updateRow.get().setCreatedEmployeeId(deliveryForm.getCreatedEmployeeId());
+			updateRow.get().setCustomerId(deliveryForm.getCustomerId());
+			updateRow.get().setNote(deliveryForm.getNote());
+			updateRow.get().setFinishDate(deliveryForm.getFinishDate());
+			updateRow.get().setOrderId(deliveryForm.getOrderId());
+			updateRow.get().setOverdueDate(deliveryForm.getOverdueDate());
+			updateRow.get().setShipperId(deliveryForm.getShipperId());
+			updateRow.get().setState(deliveryForm.getState());
+			deliveryFormTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deleteDeliveryForm(String id) {
+		int result = 1;
+		try {
+			deliveryFormTableRepository.deleteById(id);
+		} catch(Exception e) {
+			result = 0;
+			System.err. print(e.getMessage());
+		}
+		return result;
+	}
+	
+	//PaymentForm section
+	public PaymentFormDto queryAllPaymentForms(int pageNumber, int pageSize, String sortType, String direction) {
+		Sort sort = Sort.by(sortType);
+		if(direction.equals("asc")) {
+			sort = sort.ascending();
+		} else if(direction.equals("desc")) {
+			sort = sort.descending();
+		}
+		List<PaymentFormTable> rows = paymentFormTableRepository.findAll(PageRequest.of(pageNumber, pageSize, sort)).getContent();
+		List<PaymentForm> paymentForms = new ArrayList<PaymentForm>();
+		for(int i=0; i<rows.size();i++) {
+			PaymentForm element = new PaymentForm();
+			element.setAmount(rows.get(i).getAmount());
+			element.setCreatedDate(rows.get(i).getCreatedDate());
+			element.setCreatedEmployeeId(rows.get(i).getCreatedEmployeeId());
+			element.setCurrency(rows.get(i).getCurrency());
+			element.setFinishDate(rows.get(i).getFinishDate());
+			element.setNote(rows.get(i).getNote());
+			element.setOrderId(rows.get(i).getOrderId());
+			element.setPaidPersonId(rows.get(i).getPaidPersonId());
+			element.setPaymentId(rows.get(i).getPaymentId());
+			element.setPaymentType(rows.get(i).getPaymentType());
+			element.setReceiverId(rows.get(i).getReceiverId());
+			
+			paymentForms.add(element);
+		}
+		PaymentFormDto result = new PaymentFormDto();
+		result.setPaymentForms(paymentForms);
+		return result;
+	}
+	
+	public int createNewPaymentFormResource(PaymentForm paymentForm) {
+		int result = 1;
+		try {
+			PaymentFormTable row = new PaymentFormTable(paymentForm.getPaymentId(), paymentForm.getCreatedEmployeeId(), paymentForm.getCreatedDate()
+					, paymentForm.getFinishDate(), paymentForm.getOrderId(), paymentForm.getPaidPersonId()
+					, paymentForm.getReceiverId(), paymentForm.getNote(), paymentForm.getAmount()
+					, paymentForm.getCurrency(), paymentForm.getPaymentType());
+			paymentFormTableRepository.save(row);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int updatePaymentForm(String id, PaymentForm paymentForm) {
+		int result = 1;
+		try {
+			Optional<PaymentFormTable> updateRow = paymentFormTableRepository.findById(id);
+			updateRow.get().setAmount(paymentForm.getAmount());
+			updateRow.get().setCreatedDate(paymentForm.getCreatedDate());
+			updateRow.get().setCreatedEmployeeId(paymentForm.getCreatedEmployeeId());
+			updateRow.get().setCurrency(paymentForm.getCurrency());
+			updateRow.get().setFinishDate(paymentForm.getFinishDate());
+			updateRow.get().setNote(paymentForm.getNote());
+			updateRow.get().setOrderId(paymentForm.getOrderId());
+			updateRow.get().setPaidPersonId(paymentForm.getPaidPersonId());
+			updateRow.get().setPaymentId(paymentForm.getPaymentId());
+			updateRow.get().setPaymentType(paymentForm.getPaymentType());
+			paymentFormTableRepository.save(updateRow.get());
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
+	
+	public int deletePaymentForm(String id) {
+		int result = 1;
+		try {
+			paymentFormTableRepository.deleteById(id);
 		} catch(Exception e) {
 			result = 0;
 			System.err. print(e.getMessage());
