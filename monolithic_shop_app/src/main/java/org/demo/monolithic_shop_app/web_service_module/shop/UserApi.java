@@ -1,5 +1,8 @@
 package org.demo.monolithic_shop_app.web_service_module.shop;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.demo.monolithic_shop_app.security_module.User;
 import org.demo.monolithic_shop_app.security_module.UserDto;
 import org.demo.monolithic_shop_app.security_module.UserService;
@@ -51,6 +54,36 @@ public class UserApi {
 		return result + "";
 	}
 	
+	@GetMapping("/api/users/activation-code")
+	public String getActivationCode(@RequestParam(name = "username", required = true) String username) {
+		User user = userService.findUserByUsername(username);
+		String encodeDataString = username+":"+user.getUserPassword();
+		byte[] encodeBytes = Base64.getEncoder().encode(encodeDataString.getBytes());
+		String encodeString = new String(encodeBytes, StandardCharsets.UTF_8);
+		return "activated_code:" + encodeString;
+	}
+	
+	/*
+	 * This api is used for the user to activate the his/her user account
+	 * activated-code is a base64 String that contain the information of 
+	 * username and password with the structure as "username:password"
+	 */
+	@GetMapping("/api/users/activate")
+	public String activateUser(@RequestParam(name = "activated_code", required = true) String activatedCode) {
+		int result = 0;
+		byte[] decodeBytes = Base64.getDecoder().decode(activatedCode);
+		String decodeString = new String(decodeBytes, StandardCharsets.UTF_8);
+		String username = decodeString.split(":")[0];
+		String password = decodeString.split(":")[1];
+		if(userService.validateUserAccount(username, password)) {
+			result = userService.activeUser(username);
+		}
+		return result + "";
+	}
+	
+	/*
+	 * This api is used for the admin to activate a user account
+	 */
 	@PostMapping("/api/users/activate")
 	public String activateUser(@Valid @RequestBody(required = true) User user) {
 		int result = userService.activeUser(user);

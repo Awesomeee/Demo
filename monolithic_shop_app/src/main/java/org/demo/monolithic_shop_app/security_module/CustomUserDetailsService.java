@@ -35,6 +35,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 		UserTable user = userTableRepository.findByUserName(username);
 		System.out.println(user.getUserName() + " " + user.getUserPassword());
 		
+		if(!user.getState().equals("ACTIVE")) {
+			throw new UsernameNotFoundException("User is not active - please contact admin for more information");
+		}
+		
 		return new User(user.getUserName(), passwordEncoder.encode(user.getUserPassword()), authorities);
 	}
 

@@ -32,6 +32,18 @@ public class UserService {
 		return existed;
 	}
 	
+	public boolean validateUserAccount(String username, String password) {
+		boolean existed = true;
+		UserTable user = userTableRepository.findByUserName(username);
+		if(user == null)
+			existed = false;
+		else {
+			if(!user.getUserPassword().equals(password))
+				existed = false;
+		}
+		return existed;
+	}
+	
 	public int registerNewUser(User user) {
 		int result = 1;
 		try {
@@ -52,6 +64,20 @@ public class UserService {
 		try {
 			UserTable user = userTableRepository.findByUserName(userData.getUserName());
 			user.setState("ACTIVE");
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		
+		return result;
+	}
+	
+	public int activeUser(String username) {
+		int result = 1;
+		try {
+			UserTable user = userTableRepository.findByUserName(username);
+			user.setState("ACTIVE");
+			userTableRepository.save(user);
 		} catch (Exception e) {
 			result = 0;
 			System.err.println(e.getMessage());
@@ -139,6 +165,23 @@ public class UserService {
 			System.err. print(e.getMessage());
 		}
 		return result;
+	}
+	
+	public User findUserByUsername(String username) {
+		UserTable userTable = userTableRepository.findByUserName(username);
+		User element = new User();
+		element.setUserId(userTable.getUserId());
+		element.setUserName(userTable.getUserName());
+		element.setUserPassword(userTable.getUserPassword());
+		element.setEmail(userTable.getEmail());
+		element.setPhoneNumber(userTable.getPhoneNumber());
+		element.setAddress(userTable.getAddress());
+		element.setRole(userTable.getRole());
+		element.setPrivilege(userTable.getPrivilege());
+		element.setTeam(userTable.getTeam());
+		element.setState(userTable.getState());
+		
+		return element;
 	}
 
 }

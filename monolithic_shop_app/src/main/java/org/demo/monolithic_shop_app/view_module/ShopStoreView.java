@@ -33,5 +33,10 @@ public class ShopStoreView {
 		model.addAttribute("username", username);
 		return "workshop_simple_gui";
 	}
+	
+	@GetMapping(path = "/user_login")
+	public String LoginView() {
+		return "user_login";
+	}
 
 }

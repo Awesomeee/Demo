@@ -39,10 +39,22 @@ public class SecurityConfiguration {
 	            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
 	            // Permit all requests to H2 console path
 	            .authorizeHttpRequests(auth -> auth
-	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**"), antMatcher("/stream-events")).permitAll()
+	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**"), antMatcher("/stream-events"), antMatcher("/user_login")).permitAll()
 	                .anyRequest().authenticated() // Protect other endpoints
 	            )
-	            .formLogin(Customizer.withDefaults());
+	           // .formLogin(Customizer.withDefaults());
+	            .formLogin(form -> form
+	                    .loginPage("/user_login")  // This is CRITICAL
+	                    .loginProcessingUrl("/login") // Default is "/login", you can custom it by define your own url- for example "/perform_login"
+	                    .defaultSuccessUrl("/home", false)
+	                    .failureUrl("/user_login?error=true")
+	                    .permitAll()
+	                )
+	                .logout(logout -> logout
+	                    .logoutUrl("/perform_logout")
+	                    .logoutSuccessUrl("/login?logout=true")
+	                    .permitAll()
+	                );
 		} else if (mode == "COMPLEX") {
 			http
 	            // Disable CSRF for H2 console
