@@ -6,19 +6,17 @@
     <body style="background-color:rgb(102, 196, 233)">
 	    <div style="margin-top:200px;margin-left:auto;margin-right:auto;width:30%;border-style:solid;border-radius:12px;padding:1%;background-color:white">
 		    <div style="text-align:center">
-		    	<h1>Login</h1>
+		    <h1>Register</h1>
 		        <div th:if="${param.error}">
 		            Invalid username and password.
 		        </div>
-		        <div th:if="${param.logout}">
-		            You have been logged out.
-		        </div>
-		        <form th:action="@{/login}" method="post">
+		        <form th:action="@{/register}" method="post">
 		            <div><label> User Name: <input type="text" name="username"/> </label></div>
 		            <div><label> Password: <input type="password" name="password"/> </label></div>
-		            <div><input type="submit" value="Sign In"/></div>
+		            <div><label> Email: <input type="text" name="email"/> </label></div>
+		            <div><input type="submit" value="Register"/></div>
+		            <p>Already have an account yet? <a href="/user_register">Login</a></p>
 		        </form>
-		        <p>Have not an account yet? <a href="/user_register">Register</a></p>
 	        </div>
         </div>
     </body>

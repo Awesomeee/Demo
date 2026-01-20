@@ -39,7 +39,7 @@ public class SecurityConfiguration {
 	            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
 	            // Permit all requests to H2 console path
 	            .authorizeHttpRequests(auth -> auth
-	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**"), antMatcher("/stream-events"), antMatcher("/user_login")).permitAll()
+	                .requestMatchers(antMatcher("/h2-console/**"), antMatcher("/guest/**"), antMatcher("/css/**"), antMatcher("/js/**"), antMatcher("/api/products"), antMatcher("/test/**"), antMatcher("/stream-events"), antMatcher("/user_login"), antMatcher("/user_logout")).permitAll()
 	                .anyRequest().authenticated() // Protect other endpoints
 	            )
 	           // .formLogin(Customizer.withDefaults());
@@ -51,8 +51,8 @@ public class SecurityConfiguration {
 	                    .permitAll()
 	                )
 	                .logout(logout -> logout
-	                    .logoutUrl("/perform_logout")
-	                    .logoutSuccessUrl("/login?logout=true")
+	                    .logoutUrl("/logout")  // Default is "/logout", you can custom it by define your own url- for example "/perform_logout"
+	                    .logoutSuccessUrl("/guest")
 	                    .permitAll()
 	                );
 		} else if (mode == "COMPLEX") {

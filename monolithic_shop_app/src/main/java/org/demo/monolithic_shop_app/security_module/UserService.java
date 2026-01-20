@@ -3,6 +3,7 @@ package org.demo.monolithic_shop_app.security_module;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.demo.monolithic_shop_app.data_module.database.UserTable;
 import org.demo.monolithic_shop_app.data_module.database.UserTableRepository;
@@ -47,7 +48,8 @@ public class UserService {
 	public int registerNewUser(User user) {
 		int result = 1;
 		try {
-			UserTable newUser = new UserTable(user.getUserId(), user.getUserName(), user.getUserPassword(), user.getEmail()
+			String userId = UUID.randomUUID().toString();
+			UserTable newUser = new UserTable(userId, user.getUserName(), user.getUserPassword(), user.getEmail()
 					, user.getPhoneNumber(), user.getAddress(), user.getRole(), user.getPrivilege()
 					, user.getTeam(), "REQUESTING");
 			userTableRepository.save(newUser);
@@ -88,12 +90,24 @@ public class UserService {
 	
 	public void reportPasswordForgetting() {}
 	
-	public void changePassword() {}
+	public int changePassword(String username, String newPassword) {
+		int result = 1;
+		try {
+			UserTable user = userTableRepository.findByUserName(username);
+			user.setUserPassword(newPassword);
+			userTableRepository.save(user);
+		} catch (Exception e) {
+			result = 0;
+			System.err.println(e.getMessage());
+		}
+		return result;
+	}
 	
 	public int createUser(User user) {
 		int result = 1;
 		try {
-			UserTable newUser = new UserTable(user.getUserId(), user.getUserName(), user.getUserPassword(), user.getEmail()
+			String userId = UUID.randomUUID().toString();
+			UserTable newUser = new UserTable(userId, user.getUserName(), user.getUserPassword(), user.getEmail()
 					, user.getPhoneNumber(), user.getAddress(), user.getRole(), user.getPrivilege()
 					, user.getTeam(), "ACTIVE");
 			userTableRepository.save(newUser);

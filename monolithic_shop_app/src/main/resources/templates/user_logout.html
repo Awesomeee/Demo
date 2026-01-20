@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <title>Spring Security Example </title>
+    </head>
+    <body style="background-color:rgb(102, 196, 233)">
+	    <div style="margin-top:200px;margin-left:auto;margin-right:auto;width:30%;border-style:solid;border-radius:12px;padding:1%;background-color:white">
+		    <div style="text-align:center">
+		    	<h1>Logout</h1>
+		        <form th:action="@{/logout}" method="post">
+		            <div><p>Are you sure?</p></div>
+		            <div><input type="submit" value="Sign out"/></div>
+		        </form>
+	        </div>
+        </div>
+    </body>
+</html>
