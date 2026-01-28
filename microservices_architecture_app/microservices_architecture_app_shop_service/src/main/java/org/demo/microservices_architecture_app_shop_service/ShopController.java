@@ -19,12 +19,21 @@ public class ShopController {
 	
 	@GetMapping("/api/aac")
 	public String aac() {
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "aac";
 	}
 	
 	@GetMapping("/api/aad")
 	public String aad() {
-		return "aad";
+		int number_1 = 5;
+		int number_2 = 0;
+		int number_3 = number_1/number_2;
+		return "aad " + number_3;
 	}
 
 }
