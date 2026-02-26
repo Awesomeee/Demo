@@ -109,5 +109,10 @@ public class ShopStoreView {
 		}
 		return "user_change_password_result";
 	}
+	
+	@GetMapping(path = "/product_import")
+	public String ImportProductView() {
+		return "product_import";
+	}
 
 }

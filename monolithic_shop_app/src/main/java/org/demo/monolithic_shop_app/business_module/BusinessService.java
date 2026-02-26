@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.demo.monolithic_shop_app.business_module.shop.Customer;
 import org.demo.monolithic_shop_app.business_module.shop.CustomerDto;
@@ -123,7 +124,8 @@ public class BusinessService {
 	public int createNewProductResource(Product product) {
 		int result = 1;
 		try {
-			ProductTable row = new ProductTable(product.getId(), product.getName(), product.getDescription(), product.getPrice(), product.getCurrency(), product.getProvider());
+			String productId = UUID.randomUUID().toString();
+			ProductTable row = new ProductTable(productId, product.getName(), product.getDescription(), product.getPrice(), product.getCurrency(), product.getProvider());
 			productTableRepository.save(row);
 		} catch (Exception e) {
 			result = 0;
