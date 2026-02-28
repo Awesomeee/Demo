@@ -34,7 +34,7 @@
         <div id="body" style="display: flex;border-style: solid;border-color: cornflowerblue;">
             <div style="flex: 1; border-style: solid;border-color: cornflowerblue;">
                 <a href="product_import" style="display: block; margin-top: 10px;margin-left: 10px;background-color: yellow;width:70%;border-radius:5px"><i class='far fa-arrow-alt-circle-up' style='font-size:14px'></i> Import Product</a>
-                <a href="" style="display: block; margin-top: 10px;margin-left: 10px;"><i class='far fa-edit' style='font-size:14px'></i> Search/Change Product</a>
+                <a href="product_search_and_change" style="display: block; margin-top: 10px;margin-left: 10px;"><i class='far fa-edit' style='font-size:14px'></i> Search/Change Product</a>
             </div>
             <div style="flex: 4; text-align: left; padding: 20px;border-style: solid;border-color: cornflowerblue;">
                 <h2 style="color:cornflowerblue">Products Management</h2>
@@ -178,15 +178,17 @@
 						</div>
 						<div class="card-footer">
 							<button onclick=submitProductData()>Submit</button>
+							<button onclick=resetFormData()>Reset</button>
 						</div>
 					</div>
 				</div>
             </div>
         </div>
+        
         <div id="footer" style="background-color: cornflowerblue; padding: 10px; color: white;height: 30px;">
         </div>
         
-        <script src="/js/afterLoadingPage.js">
-        </script>
+        <script src="/js/afterLoadingPage.js"></script>
+		
     </body>
 </html>

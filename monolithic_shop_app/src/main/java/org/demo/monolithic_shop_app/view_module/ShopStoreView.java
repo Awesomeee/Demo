@@ -114,5 +114,10 @@ public class ShopStoreView {
 	public String ImportProductView() {
 		return "product_import";
 	}
+	
+	@GetMapping(path = "/product_search_and_change")
+	public String SearchAndChangeProductView() {
+		return "product_search_and_change";
+	}
 
 }

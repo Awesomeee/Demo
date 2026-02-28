@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -99,10 +100,26 @@ public class ProductApi {
 		return result;
 	}
 	
-	@GetMapping(path = "/api/products/conditions")
+	@PostMapping(path = "/api/products/conditions")
 	@ResponseStatus(code = HttpStatus.OK)
-	public List<ProductTable> queryProductListByConditions(@RequestBody(required = true) HashMap<String, String> conditionMap) {
-		return businessService.queryProductByDynamicallyConditions(conditionMap);
+	public ProductDto queryProductListByConditions(@RequestBody(required = true) HashMap<String, String> conditionMap) {
+		
+		List<ProductTable> productTableList = businessService.queryProductByDynamicallyConditions(conditionMap);
+		List<Product> products = new ArrayList<Product>();
+		for(int i=0; i<productTableList.size();i++) {
+			Product element = new Product();
+			element.setId(productTableList.get(i).getId());
+			element.setName(productTableList.get(i).getName());
+			element.setDescription(productTableList.get(i).getDescription());
+			element.setPrice(productTableList.get(i).getPrice());
+			element.setCurrency(productTableList.get(i).getCurrency());
+			element.setProvider(productTableList.get(i).getProvider());
+			
+			products.add(element);
+		}
+		ProductDto result = new ProductDto();
+		result.setProducts(products);
+		return result;
 	}
 	
 	@GetMapping(path = "/api/products/{product-id}")

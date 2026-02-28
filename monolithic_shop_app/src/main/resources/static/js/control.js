@@ -26,8 +26,7 @@ function modifyTableRow() {
 	
 	const inputTable = document.querySelector(".table");
 	const rows = inputTable.querySelectorAll("tbody > tr");
-	console.log("aa");
-	console.log(rows);
+	
 	tds = rows[selectedIndex].querySelectorAll("td");
 	tds[0].innerHTML = editSpecificationInput.value;
 	tds[1].innerHTML = editDescriptionInput.value;
