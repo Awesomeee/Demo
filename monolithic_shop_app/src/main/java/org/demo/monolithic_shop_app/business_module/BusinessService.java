@@ -22,7 +22,7 @@ import org.demo.monolithic_shop_app.business_module.workshop.PaymentForm;
 import org.demo.monolithic_shop_app.business_module.workshop.PaymentFormDto;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
-import org.demo.monolithic_shop_app.business_module.workshop.ProductReport;
+import org.demo.monolithic_shop_app.business_module.workshop.ProductStatistic;
 import org.demo.monolithic_shop_app.business_module.workshop.Provider;
 import org.demo.monolithic_shop_app.business_module.workshop.ProviderDto;
 import org.demo.monolithic_shop_app.data_module.database.CustomerTable;
@@ -263,7 +263,7 @@ public class BusinessService {
 		return result;
 	}
 	
-	public ProductReport reportProductStatistically() {
+	public ProductStatistic reportProductStatistically() {
 		int productCount = (int) productTableRepository.count();
 		List<String> categories = productTableRepository.findDistinctCategoryByQuery();
 		List<Integer> categoryCountList = new ArrayList<Integer>();
@@ -271,7 +271,7 @@ public class BusinessService {
 			int categoryCount = productTableRepository.countByCategory(categories.get(i));
 			categoryCountList.add(categoryCount);
 		}
-		ProductReport report = new ProductReport(productCount, categories, categoryCountList);
+		ProductStatistic report = new ProductStatistic(productCount, categories, categoryCountList);
 		return report;
 	}
 	

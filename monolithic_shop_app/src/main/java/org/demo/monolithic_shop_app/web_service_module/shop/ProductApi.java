@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.demo.monolithic_shop_app.business_module.BusinessService;
 import org.demo.monolithic_shop_app.business_module.workshop.Product;
 import org.demo.monolithic_shop_app.business_module.workshop.ProductDto;
-import org.demo.monolithic_shop_app.business_module.workshop.ProductReport;
+import org.demo.monolithic_shop_app.business_module.workshop.ProductStatistic;
 import org.demo.monolithic_shop_app.data_module.database.ProductTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 public class ProductApi {
@@ -143,7 +151,7 @@ public class ProductApi {
 	}
 	
 	@DeleteMapping(path = "/api/products/{product-id}")
-	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	//@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public String deleteProductResource(@PathVariable(name = "product-id", required = true) String productId) {
 		int result = businessService.deleteProductById(productId);
 		return result + "";
@@ -171,8 +179,37 @@ public class ProductApi {
 	}
 	
 	@GetMapping("/api/products/report")
-	public ProductReport analizeProductResources() {
+	public ProductStatistic analizeProductResources() {
 		return businessService.reportProductStatistically();
+	}
+	
+	@GetMapping(path = "api/products/statistic", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public SseEmitter streamEventsAnalizeProductResources() {
+	    SseEmitter emitter = new SseEmitter();
+	    // Logic to send events to the emitter in a separate thread
+	    ExecutorService sseMvcExecutor = Executors.newSingleThreadExecutor();
+	    sseMvcExecutor.execute(() -> {
+	        try {
+	            for (int i = 0; true; i++) {
+	            	ProductStatistic ps = businessService.reportProductStatistically();
+	            	ObjectMapper mapper = new ObjectMapper();
+	            	mapper.enable(SerializationFeature.INDENT_OUTPUT);
+	            	String jsonString = mapper.writeValueAsString(ps);
+	            	
+	                SseEventBuilder event = SseEmitter.event()
+	                  .data("SSE ProductStatistic - " + jsonString + " - " + LocalTime.now().toString())
+	                  .id(String.valueOf(i))
+	                  .name("sse event - ProductStatistic");
+	                emitter.send(event);
+	                Thread.sleep(1000);
+	                
+	                //need to implement logic to finish the operation and close the connection or the function will run forever
+	            }
+	        } catch (Exception ex) {
+	            emitter.completeWithError(ex);
+	        }
+	    });
+	    return emitter;
 	}
 	
 	@PostMapping(path = "/test")

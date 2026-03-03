@@ -2,15 +2,15 @@ package org.demo.monolithic_shop_app.business_module.workshop;
 
 import java.util.List;
 
-public class ProductReport {
+public class ProductStatistic {
 	
 	private int totalProductCount;
 	private List<String> productCategoryNameList;
 	private List<Integer> totalProductCategoryCountList;
 	
-	public ProductReport() {}
+	public ProductStatistic() {}
 	
-	public ProductReport(int totalProductCount, List<String> productCategoryNameList, List<Integer> totalProductCategoryCountList) {
+	public ProductStatistic(int totalProductCount, List<String> productCategoryNameList, List<Integer> totalProductCategoryCountList) {
 		this.totalProductCount = totalProductCount;
 		this.productCategoryNameList = productCategoryNameList;
 		this.setTotalProductCategoryCountList(totalProductCategoryCountList);

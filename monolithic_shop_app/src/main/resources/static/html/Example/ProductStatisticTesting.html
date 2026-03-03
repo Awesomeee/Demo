@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home page</title>
+    </head>
+    <script>
+    </script>
+    <body>
+        <p>Hello, guest</p>
+        <div id="output"></div>
+    
+    <script>
+		async function connectWithFetch() {
+		    const url = 'http://localhost:8080/api/products/statistic';
+		    console.log('Connecting with fetch API to:', url);
+		    
+		    try {
+		        const response = await fetch(url);
+		        const reader = response.body.getReader();
+		        const decoder = new TextDecoder();
+		        
+		        console.log('Fetch connection established');
+		        
+		        while (true) {
+		            const {value, done} = await reader.read();
+		            if (done) break;
+		            
+		            const text = decoder.decode(value);
+		            console.log('Raw chunk received:', text);
+		            
+		            // Parse SSE manually
+		            const lines = text.split('\n');
+		            for (const line of lines) {
+		                if (line.startsWith('data: ')) {
+		                    const data = line.substring(6);
+		                    console.log('Parsed data:', data);
+		                    document.getElementById('output').innerHTML = 
+		                        `<p>${new Date().toLocaleTimeString()}: ${data}</p>`;
+		                        
+		                    if(data.includes("totalProductCount")) {
+		                    	//var totalProductCount = JSON.parse(data.split(":")[1].trim().split[","][0]);
+		                    	var totalProductCount = data.split(":")[1].trim();
+		                    	console.log(totalProductCount);
+		                    } else if(data.includes("productCategoryNameList")) {
+		                    	//var productCategoryNameList = JSON.parse(data.split(":")[1].trim());
+		                    	//console.log(productCategoryNameList);
+		                    } else if(data.includes("totalProductCategoryCountList")) {
+		                    	//var totalProductCategoryCountList = JSON.parse(data.split(":")[1].trim());
+		                    	//console.log(totalProductCategoryCountList);
+		                    }
+		                }
+		            }
+		        }
+		    } catch (error) {
+		        console.error('Fetch error:', error);
+		    }
+		}
+		
+		// Call it
+		connectWithFetch();
+	</script>
+    </body>
+</html>

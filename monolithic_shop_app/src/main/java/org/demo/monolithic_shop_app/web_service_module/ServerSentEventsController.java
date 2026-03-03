@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEvent
 @RestController
 public class ServerSentEventsController {
 	
-	@CrossOrigin(origins = "http://your-frontend-domain:port")
+	//@CrossOrigin(origins = "http://your-frontend-domain:port")
 	@GetMapping(path = "/stream-events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public SseEmitter streamEvents() {
 	    SseEmitter emitter = new SseEmitter();

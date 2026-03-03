@@ -157,7 +157,7 @@
 								</div>
 								<div class="modal-footer">
 									<button type="button" data-bs-dismiss="modal" onclick="confirmUpdate()">Modify</button>
-									<button type="button" data-bs-dismiss="modal" onclick="deleteTableRow()">Delete</button>
+									<button type="button" data-bs-dismiss="modal" onclick="confirmDelete()">Delete</button>
 									<button type="button" data-bs-dismiss="modal">Cancel</button>
 								</div>
 							
@@ -374,7 +374,43 @@
 				    	  			});
 			}
 			
-			function deleteProductData() {}
+			function confirmDelete() {
+				// Get the modal element
+				const confirmDeleteModalEl = document.getElementById('confirmDeleteModal');
+				// Create a modal instance
+				const confirmDeleteModal = new bootstrap.Modal(confirmDeleteModalEl);
+				confirmDeleteModal.show();
+			}
+			
+			function deleteProductData() {
+				document.getElementById("main_content").style.display = "none";
+				
+				const inputTable = document.querySelector(".table");
+				const rows = inputTable.querySelectorAll("tbody > tr");	
+				ths = rows[selectedIndex].querySelectorAll("th");
+				console.log(ths[0].innerHTML);
+				
+				let updateUri = 'http://localhost:8080/api/products/' + ths[0].innerHTML;
+			
+				fetch(updateUri, {
+				      method: 'DELETE',
+				      headers: {
+				        'Content-Type': 'text/plan',
+				      },
+				    })
+				      .then(response => response.text())
+				      .then(outputData => {
+				    	  			console.log(outputData);
+				    	  				if(outputData == 1) {
+				    	  					console.log("success");
+				    	  					loadProductData();
+				    	  				} else {
+				    	  					console.log("fail");
+				    	  				}
+				    	  				//document.getElementById("loading").style.display = "none";
+				    	  				//document.getElementById("main_content").style.display = "initial";
+				    	  			});
+			}
 			
 			loadProductData();
 		</script>
