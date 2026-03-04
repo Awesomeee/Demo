@@ -195,13 +195,14 @@ public class ProductApi {
 	            	ObjectMapper mapper = new ObjectMapper();
 	            	mapper.enable(SerializationFeature.INDENT_OUTPUT);
 	            	String jsonString = mapper.writeValueAsString(ps);
-	            	
+	            	//System.out.println(jsonString);
 	                SseEventBuilder event = SseEmitter.event()
-	                  .data("SSE ProductStatistic - " + jsonString + " - " + LocalTime.now().toString())
-	                  .id(String.valueOf(i))
-	                  .name("sse event - ProductStatistic");
+	                  //.data("SSE ProductStatistic - " + jsonString + " - " + LocalTime.now().toString())
+	                	.data(jsonString);
+	                  //.id(String.valueOf(i))
+	                  //.name("sse event - ProductStatistic");
 	                emitter.send(event);
-	                Thread.sleep(1000);
+	                Thread.sleep(3000);
 	                
 	                //need to implement logic to finish the operation and close the connection or the function will run forever
 	            }

@@ -2,13 +2,19 @@
 <html>
     <head>
         <title>Home page</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
     </head>
     <script>
     </script>
     <body>
         <p>Hello, guest</p>
         <div id="output"></div>
-    
+        <div style="display:flex">
+        	<div style="flex:1">
+    			<canvas id="myChart" style="width:100%"></canvas>
+    		</div>
+    		<div style="flex:4"></div>
+    	</div>
     <script>
 		async function connectWithFetch() {
 		    const url = 'http://localhost:8080/api/products/statistic';
@@ -26,10 +32,36 @@
 		            if (done) break;
 		            
 		            const text = decoder.decode(value);
-		            console.log('Raw chunk received:', text);
+		            console.log(text);
+		            
+		            if(text.includes("totalProductCount")) {
+		            	console.log(true);
+		            	var data = text.replaceAll("data:","");
+		            	console.log("after replace");
+		            	console.log(data);
+		            	var dataObj = JSON.parse(data);
+		            	console.log(dataObj.totalProductCount);
+		            	document.getElementById('output').innerHTML = 
+	                        `<p>Total Product number: ${dataObj.totalProductCount}</p>`;
+		            	console.log(dataObj.productCategoryNameList);
+		            	xValues = dataObj.productCategoryNameList;
+		            	console.log(dataObj.totalProductCategoryCountList);
+		            	yValues = dataObj.totalProductCategoryCountList;
+		            	chart.data.labels = xValues;
+		            	chart.data.datasets[0].data = yValues;
+		            	chart.update();
+		            }
+		            
+		           /* if(text.includes("totalProductCount")) {
+		            	text = text.replaceAll("data:","");
+		            	console.log("after replace");
+		            	console.log(text);
+		            	//var data = JSON.parse(text);
+		            	//console.log(data);
+		            }*/
 		            
 		            // Parse SSE manually
-		            const lines = text.split('\n');
+		            /*const lines = text.split('\n');
 		            for (const line of lines) {
 		                if (line.startsWith('data: ')) {
 		                    const data = line.substring(6);
@@ -49,12 +81,43 @@
 		                    	//console.log(totalProductCategoryCountList);
 		                    }
 		                }
-		            }
+		            }*/
 		        }
 		    } catch (error) {
 		        console.error('Fetch error:', error);
 		    }
 		}
+		
+		var xValues = ["", "", ""];
+		var yValues = [0, 0, 0];
+		const barColors = [
+		  "#b91d47",
+		  "#00aba9",
+		  "#2b5797",
+		];
+
+		const ctx = document.getElementById('myChart');
+
+		var chart = new Chart(ctx, {
+		  type: "pie",
+		  data: {
+		    labels: xValues,
+		    datasets: [{
+		      backgroundColor: barColors,
+		      data: yValues
+		    }]
+		  },
+		  options: {
+		    plugins: {
+		      legend: {display:true},
+		      title: {
+		        display: true,
+		        text: "Product Statistic",
+		        font: {size:16}
+		      }
+		    }
+		  }
+		});
 		
 		// Call it
 		connectWithFetch();
