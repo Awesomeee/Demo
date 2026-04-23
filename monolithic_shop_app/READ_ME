@@ -7,4 +7,6 @@
  * When the essence functionality for the shop application is complete, I
  * decide to develop extend module so that the application can be used for
  * the restaurant business(and maybe for the hotel business in the future)
+ *
+ * the swagger url is http://localhost:8080/v3/api-docs and http://localhost:8080/swagger-ui/index.html
  */

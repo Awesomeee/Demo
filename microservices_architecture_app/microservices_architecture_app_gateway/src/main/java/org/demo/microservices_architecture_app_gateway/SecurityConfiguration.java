@@ -15,20 +15,9 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfiguration {
 
-	/*
-	 * author: duyl
-	 * created date: Wed 16 Jul, 2025
-	 * 
-	 * SIMPLE: turn off csrf in formLogin mode, COMPLEX: turn on csrf in httpBasic mode, COMPLEX_2: turn on csrf in formLogin mode
-	 * When use in formLogin, should turn off csrf because currently I still haven't known how to unlock it for rest client yet,
-	 * the only way so far is to set security configuration so that csrf will ignore the specific endpoint you want to call,
-	 * When use in httpBasic(In a microservice architecture where the service doesn't need to have form or user interaction), you
-	 * can turn on csrf and follow this process: first call a GET request to endpoint /csrf-token to get csrf-token value, then you
-	 * use the value of it to add a http header "X-CSRF-TOKEN" with the token value (of course we also need a Authorization httpHeader)
-	 */
 	@Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
-		String authenticationModel = "stateless";	//stateful, stateless
+		String authenticationModel = "stateful";	//stateful, stateless
 		if(authenticationModel.equals("stateful")) {
 			http
 	        .authorizeExchange((authorize) -> authorize

@@ -1,0 +1,7 @@
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Shop Service
+        url: http://localhost:8080/v3/api-docs
+      - name: Workshop Service
+        url: http://localhost:8081/v3/api-docs
